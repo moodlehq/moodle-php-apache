@@ -1,0 +1,11 @@
+language: bash
+services: docker
+install:
+    - docker build -t moodle-php-apache .
+script:
+    - "docker run --name test0 -d -p 8000:80 -v $PWD/tests/fixtures:/var/www/html moodle-php-apache"
+    - docker exec test0 php /var/www/html/test.php
+    - curl --fail http://127.0.0.1:8000/test.php
+after_script:
+    - docker rm -f test0
+
