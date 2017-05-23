@@ -4,32 +4,14 @@ set -e
 
 echo "Installing apt depdencies"
 
-apt-get update
-apt-get install -y \
-    gettext \
-    libcurl4-openssl-dev \
-    libpq-dev \
-    libmysqlclient-dev \
-    libldap2-dev \
-    libxslt-dev \
-    libxml2-dev \
-    libicu-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
-    libmemcached-dev \
-    zlib1g-dev \
-    libpng12-dev \
-    libaio1 \
-    unzip \
-    ghostscript \
-    locales \
-    apt-transport-https \
-    unixodbc \
-    unixodbc-dev \
-    libgss3 \
-    odbcinst
+BUILD_PACKAGES="gettext libcurl4-openssl-dev libpq-dev libmysqlclient-dev libldap2-dev libxslt-dev \
+    libxml2-dev libicu-dev libfreetype6-dev libjpeg62-turbo-dev libmemcached-dev \
+    zlib1g-dev libpng12-dev locales unixodbc-dev apt-transport-https"
 
+LIBS="libaio1 libcurl3 libgss3 libicu52 libmysqlclient18 libpq5 libmemcached11 libmemcachedutil2 libldap-2.4-2 libxml2 libxslt1.1 unixodbc"
+
+apt-get update
+apt-get install -y --no-install-recommends $BUILD_PACKAGES $LIBS unzip ghostscript locales
 echo 'Generating locales..'
 echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
 echo 'en_AU.UTF-8 UTF-8' >> /etc/locale.gen
@@ -62,5 +44,13 @@ curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 curl https://packages.microsoft.com/config/debian/8/prod.list -o /etc/apt/sources.list.d/mssql-release.list
 apt-get update
 ACCEPT_EULA=Y apt-get install -y msodbcsql
+
 pecl install sqlsrv-4.1.6.1
 docker-php-ext-enable sqlsrv
+
+# Keep our image size down..
+pecl clear-cache
+apt-get remove --purge -y $BUILD_PACKAGES
+apt-get autoremove -y
+apt-get clean
+rm -rf /var/lib/apt/lists/*
