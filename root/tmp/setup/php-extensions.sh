@@ -4,7 +4,6 @@ set -e
 
 echo "Installing apt depdencies"
 
-
 apt-get update
 apt-get install -y \
     gettext \
@@ -24,7 +23,12 @@ apt-get install -y \
     libaio1 \
     unzip \
     ghostscript \
-    locales
+    locales \
+    apt-transport-https \
+    unixodbc \
+    unixodbc-dev \
+    libgss3 \
+    odbcinst
 
 echo 'Generating locales..'
 echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
@@ -48,7 +52,15 @@ docker-php-ext-install -j$(nproc) gd
 docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
-pecl install solr memcache redis mongodb igbinary apcu-4.0.11 memcached-2.2.0
-docker-php-ext-enable solr memcache memcached redis mongodb apcu igbinary
+pecl install solr memcached redis apcu igbinary
+docker-php-ext-enable solr memcached redis apcu igbinary
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
+
+# Install Microsoft depdencises for sqlsrv
+curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+curl https://packages.microsoft.com/config/debian/8/prod.list -o /etc/apt/sources.list.d/mssql-release.list
+apt-get update
+ACCEPT_EULA=Y apt-get install -y msodbcsql
+pecl install sqlsrv-4.1.6.1
+docker-php-ext-enable sqlsrv
