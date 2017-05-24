@@ -2,8 +2,7 @@
 
 A Moodle PHP environment configured for Moodle development.
 
-Based on <a href="https://hub.docker.com/_/php/">Official PHP Images</a> with php extensions required
-for all Moodle database drivers.
+PHP and Apache configured to serve /var/www/html/ based on [Official PHP Images](https://hub.docker.com/_/php/) with php extensions required for all Moodle database drivers and extensions.
 
 # Versions
 

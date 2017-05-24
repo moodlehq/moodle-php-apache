@@ -6,7 +6,7 @@ echo "Installing apt depdencies"
 
 BUILD_PACKAGES="gettext libcurl4-openssl-dev libpq-dev libmysqlclient-dev libldap2-dev libxslt-dev \
     libxml2-dev libicu-dev libfreetype6-dev libjpeg62-turbo-dev libmemcached-dev \
-    zlib1g-dev libpng12-dev locales unixodbc-dev"
+    zlib1g-dev libpng12-dev unixodbc-dev"
 
 LIBS="libaio1 libcurl3 libgss3 libicu52 libmysqlclient18 libpq5 libmemcached11 libmemcachedutil2 libldap-2.4-2 libxml2 libxslt1.1 unixodbc"
 
