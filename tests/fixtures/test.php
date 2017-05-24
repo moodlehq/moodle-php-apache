@@ -27,12 +27,17 @@ foreach($requiredextensions as $ext) {
     }
 }
 
+$locale = 'en_AU.UTF-8';
+if (setlocale(LC_TIME, $locale) === false) {
+    $missing[] = $locale;
+}
+
 if (php_sapi_name() === 'cli') {
     if (empty($missing)) {
         echo "OK\n";
         exit(0);
     }
-    echo 'PHP Extensions missing: '.join(', ', $missing)."\n";
+    echo 'Missing: '.join(', ', $missing)."\n";
     exit(1);
 } else {
     if (empty($missing)) {
