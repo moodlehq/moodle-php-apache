@@ -2,7 +2,7 @@
 
 A Moodle PHP environment configured for Moodle development based on [Official PHP Images](https://hub.docker.com/_/php/).
 
-# Versions
+### Versions
 
 | PHP Version  | Tag | Status |
 |--------------|-----|--------|
