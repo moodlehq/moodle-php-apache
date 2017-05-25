@@ -23,3 +23,8 @@ $ docker run --name web0 -p 8080:80  -v $PWD:/var/www/html danpoltawski/moodle-p
 * Verified by [automated tests](https://travis-ci.org/danpoltawski/moodle-php-apache)
 
 
+# See also
+This container is part of a set of containers for Moodle development, see also:
+* [docker-moodle](https://github.com/danpoltawski/docker-moodle) a docker-composer based set of tools to get Moodle development running with zero configuration
+* [moodle-db-mssql](https://github.com/danpoltawski/moodle-db-mssql) Microsoft SQL Server for Linux configured for Moodle development
+* [moodle-db-oracle](https://github.com/danpoltawski/moodle-db-oracle) Oracle XE configured for Moodle development
