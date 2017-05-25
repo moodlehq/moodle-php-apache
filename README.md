@@ -4,6 +4,12 @@ A Moodle PHP environment configured for Moodle development.
 
 PHP and Apache configured to serve /var/www/html/ based on [Official PHP Images](https://hub.docker.com/_/php/) with php extensions required for all Moodle database drivers and extensions.
 
+# Example usage
+The following command will expose the current working directory on port 8080:
+```bash
+$ docker run --name web0 -p 8080:80  -v $PWD:/var/www/html danpoltawski/moodle-php-apache:7.1
+```
+
 # Versions
 
 | PHP Version  | Tag | Status |
