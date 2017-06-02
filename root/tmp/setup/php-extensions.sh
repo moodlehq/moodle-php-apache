@@ -8,7 +8,7 @@ BUILD_PACKAGES="gettext libcurl4-openssl-dev libpq-dev libmysqlclient-dev liblda
     libxml2-dev libicu-dev libfreetype6-dev libjpeg62-turbo-dev libmemcached-dev \
     zlib1g-dev libpng12-dev unixodbc-dev apt-transport-https"
 
-LIBS="locales libaio1 libcurl3 libgss3 libicu52 libmysqlclient18 libpq5 libmemcached11 libmemcachedutil2 libldap-2.4-2 libxml2 libxslt1.1 unixodbc"
+LIBS="locales libaio1 libcurl3 libgss3 libicu52 libmysqlclient18 libpq5 libmemcached11 libmemcachedutil2 libldap-2.4-2 libxml2 libxslt1.1 unixodbc libmcrypt-dev"
 
 apt-get update
 apt-get install -y --no-install-recommends $BUILD_PACKAGES $LIBS unzip ghostscript locales
@@ -21,6 +21,7 @@ echo "Installing php extensions"
 docker-php-ext-install -j$(nproc) \
     intl \
     mysqli \
+    opcache \
     pgsql \
     soap \
     xsl \
