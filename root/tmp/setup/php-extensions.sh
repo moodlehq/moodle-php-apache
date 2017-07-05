@@ -11,7 +11,7 @@ BUILD_PACKAGES="gettext libcurl4-openssl-dev libpq-dev libmysqlclient-dev liblda
 LIBS="libaio1 libcurl3 libgss3 libicu52 libmysqlclient18 libpq5 libmemcached11 libmemcachedutil2 libldap-2.4-2 libxml2 libxslt1.1 unixodbc"
 
 apt-get update
-apt-get install -y --no-install-recommends $BUILD_PACKAGES $LIBS unzip ghostscript locales
+apt-get install -y --no-install-recommends $BUILD_PACKAGES $LIBS unzip ghostscript locales apt-transport-https
 echo 'Generating locales..'
 echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
 echo 'en_AU.UTF-8 UTF-8' >> /etc/locale.gen
