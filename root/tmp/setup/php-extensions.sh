@@ -21,6 +21,7 @@ echo "Installing php extensions"
 docker-php-ext-install -j$(nproc) \
     intl \
     mysqli \
+    opcache \
     pgsql \
     soap \
     xsl \
