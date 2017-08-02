@@ -22,6 +22,14 @@ $ docker run --name web0 -p 8080:80  -v $PWD:/var/www/html danpoltawski/moodle-p
 * Serves wwroot configured at /var/www/html/
 * Verified by [automated tests](https://travis-ci.org/danpoltawski/moodle-php-apache)
 
+# Directories
+
+To faciliate testing and easy setup the following directories are created and owned by www-data by default:
+* `/var/www/moodledata`
+* `/var/www/phpunitdata`
+* `/var/www/behatdata`
+* `/var/www/behatfaildumps`
+
 
 # See also
 This container is part of a set of containers for Moodle development, see also:
