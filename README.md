@@ -33,6 +33,6 @@ To faciliate testing and easy setup the following directories are created and ow
 
 # See also
 This container is part of a set of containers for Moodle development, see also:
-* [docker-moodle](https://github.com/moodlehq/docker-moodle) a docker-composer based set of tools to get Moodle development running with zero configuration
+* [moodle-docker](https://github.com/moodlehq/moodle-docker) a docker-composer based set of tools to get Moodle development running with zero configuration
 * [moodle-db-mssql](https://github.com/moodlehq/moodle-db-mssql) Microsoft SQL Server for Linux configured for Moodle development
 * [moodle-db-oracle](https://github.com/moodlehq/moodle-db-oracle) Oracle XE configured for Moodle development
