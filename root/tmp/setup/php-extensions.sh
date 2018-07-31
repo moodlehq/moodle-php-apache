@@ -2,16 +2,38 @@
 
 set -e
 
-echo "Installing apt depdencies"
+echo "Installing apt dependencies"
 
-BUILD_PACKAGES="gettext libcurl4-openssl-dev libpq-dev libmysqlclient-dev libldap2-dev libxslt-dev \
-    libxml2-dev libicu-dev libfreetype6-dev libjpeg62-turbo-dev libmemcached-dev \
-    zlib1g-dev libpng12-dev unixodbc-dev"
+# Build packages will be added during the build, but will be removed at the end.
+BUILD_PACKAGES="gettext gnupg libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev \
+  libldap2-dev libmariadbclient-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev \
+  unixodbc-dev zlib1g-dev"
 
-LIBS="locales libaio1 libcurl3 libgss3 libicu52 libmysqlclient18 libpq5 libmemcached11 libmemcachedutil2 libldap-2.4-2 libxml2 libxslt1.1 unixodbc libmcrypt-dev"
+# Packages for Postgres.
+PACKAGES_POSTGRES="libpq5"
+
+# Packages for MariaDB and MySQL.
+PACKAGES_MYMARIA="libmariadbclient18"
+
+# Packages for other Moodle runtime dependenices.
+PACKAGES_RUNTIME="ghostscript libaio1 libcurl3 libgss3 libicu57 libmcrypt-dev libxml2 libxslt1.1 locales sassc unzip unixodbc"
+
+# Packages for Memcached.
+PACKAGES_MEMCACHED="libmemcached11 libmemcachedutil2"
+
+# Packages for LDAP.
+PACKAGES_LDAP="libldap-2.4-2"
 
 apt-get update
-apt-get install -y --no-install-recommends $BUILD_PACKAGES $LIBS unzip ghostscript locales apt-transport-https
+apt-get install -y --no-install-recommends apt-transport-https \
+    $BUILD_PACKAGES \
+    $PACKAGES_POSTGRES \
+    $PACKAGES_MYMARIA \
+    $PACKAGES_RUNTIME \
+    $PACKAGES_MEMCACHED \
+    $PACKAGES_LDAP
+
+# Generate the locales configuration fo rboth Australia, and the US.
 echo 'Generating locales..'
 echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
 echo 'en_AU.UTF-8 UTF-8' >> /etc/locale.gen
@@ -28,24 +50,27 @@ docker-php-ext-install -j$(nproc) \
     xmlrpc \
     zip
 
+# GD.
 docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 docker-php-ext-install -j$(nproc) gd
 
+# LDAP.
 docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
+# SOLR, Memcached, Redis, APCu, igbinary.
 pecl install solr memcached redis apcu igbinary
 docker-php-ext-enable solr memcached redis apcu igbinary
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 
-# Install Microsoft depdencises for sqlsrv
+# Install Microsoft dependcies for sqlsrv.
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-curl https://packages.microsoft.com/config/debian/8/prod.list -o /etc/apt/sources.list.d/mssql-release.list
+curl https://packages.microsoft.com/config/debian/9/prod.list -o /etc/apt/sources.list.d/mssql-release.list
 apt-get update
-ACCEPT_EULA=Y apt-get install -y msodbcsql
+ACCEPT_EULA=Y apt-get install -y msodbcsql17
 
-pecl install sqlsrv-4.3.0
+pecl install sqlsrv
 docker-php-ext-enable sqlsrv
 
 # Keep our image size down..
