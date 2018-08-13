@@ -40,7 +40,7 @@ docker-php-ext-enable solr memcache memcached redis mongodb apcu igbinary
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 
 echo "Downloading freedts files"
-curl ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.33.tar.gz -o /tmp/freetds-1.00.33.tar.gz
+curl http://www.freetds.org/files/stable/freetds-1.00.33.tar.gz -o /tmp/freetds-1.00.33.tar.gz
 
 echo "Building mssql extension"
 cd /tmp && tar -xvf freetds-1.00.33.tar.gz && cd freetds-1.00.33 \
