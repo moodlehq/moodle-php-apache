@@ -48,6 +48,8 @@ ACCEPT_EULA=Y apt-get install -y msodbcsql
 pecl install sqlsrv-4.3.0
 docker-php-ext-enable sqlsrv
 
+pecl install xdebug-2.6.1
+
 # Keep our image size down..
 pecl clear-cache
 apt-get remove --purge -y $BUILD_PACKAGES
