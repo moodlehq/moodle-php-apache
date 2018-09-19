@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+# A space-separated list of additional tags to place on this image.
+additionalTags=(7.0-stretch 70-stretch)
+
+# Parse image name for repo name.
+tagStart=$(expr index "$IMAGE_NAME" :)
+repoName=${IMAGE_NAME:0:tagStart-0}
+
+# Tag and push image for each additional tag
+for tag in ${additionalTags[@]}; do
+    docker tag $IMAGE_NAME ${repoName}:${tag}
+    docker push ${repoName}:${tag}
+done
