@@ -3,7 +3,7 @@
 set -e
 
 # A space-separated list of additional tags to place on this image.
-additionalTags=(5.6-stretch 56-stretch)
+additionalTags=(5.6)
 
 # Tag and push image for each additional tag
 for tag in ${additionalTags[@]}; do
