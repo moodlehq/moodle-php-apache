@@ -4,11 +4,14 @@ A Moodle PHP environment configured for Moodle development based on [Official PH
 
 ### Versions
 
-| PHP Version  | Tag | Status |
-|--------------|-----|--------|
-| PHP 7.1 | 7.1 | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=php71)](https://travis-ci.org/moodlehq/moodle-php-apache)|
-| PHP 7.0 | 7.0 | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=php70)](https://travis-ci.org/moodlehq/moodle-php-apache)|
-| PHP 5.6 | 5.6 | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=php56)](https://travis-ci.org/moodlehq/moodle-php-apache)|
+| PHP Version  | Variant | Tags             | Status |
+|--------------|---------|------------------|--------|
+| PHP 7.1      | Stretch | 7.1, 7.1-stretch | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=7.1-stretch)](https://travis-ci.org/moodlehq/moodle-php-apache)|
+| PHP 7.0      | Stretch | 7.0, 7.0-stretch | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=7.0-stretch)](https://travis-ci.org/moodlehq/moodle-php-apache)|
+| PHP 5.6      | Stretch | 5.6, 5.6-stretch | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=5.6-stretch)](https://travis-ci.org/moodlehq/moodle-php-apache)|
+| PHP 7.1      | Jessie  | 7.1-jessie       | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=7.1-jessie)](https://travis-ci.org/moodlehq/moodle-php-apache)|
+| PHP 7.0      | Jessie  | 7.0-jessie       | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=7.0-jessie)](https://travis-ci.org/moodlehq/moodle-php-apache)|
+| PHP 5.6      | Jessie  | 5.6-jessie       | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=5.6-jessie)](https://travis-ci.org/moodlehq/moodle-php-apache)|
 
 # Example usage
 The following command will expose the current working directory on port 8080:
