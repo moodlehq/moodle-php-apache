@@ -11,7 +11,7 @@ $requiredextensions = [
     'oci8',
     'pgsql',
     'redis',
-    'solr',
+//  'solr',  Ref: https://github.com/moodlehq/moodle-php-apache/issues/19
     'soap',
     'sqlsrv',
     'xsl',
