@@ -2,6 +2,13 @@ FROM php:7.1-apache-stretch
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Install NVM and the current (as of 26/02/2019) LTS version of Node.
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION lts/carbon
+RUN mkdir -p $NVM_DIR && \
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash && \
+    . $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION
+
 # Install the standard PHP extensions.
 ADD root/tmp/setup/php-extensions.sh /tmp/setup/
 RUN chmod 777 /tmp && chmod +t /tmp && \
