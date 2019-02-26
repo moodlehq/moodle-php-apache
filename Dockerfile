@@ -1,14 +1,22 @@
 FROM php:7.1-apache-stretch
 
-ADD root/ /
-# Fix the original permissions of /tmp, the PHP default upload tmp dir.
-RUN chmod 777 /tmp && chmod +t /tmp
-
-# Setup the required extensions.
 ARG DEBIAN_FRONTEND=noninteractive
-RUN /tmp/setup/php-extensions.sh
-RUN /tmp/setup/oci8-extension.sh
+
+# Install the standard PHP extensions.
+ADD root/tmp/setup/php-extensions.sh /tmp/setup/
+RUN chmod 777 /tmp && chmod +t /tmp && \
+    /tmp/setup/php-extensions.sh
+
+# Install the PHP MSSQL Extension.
+ADD root/tmp/setup/mssql-extension.sh /tmp/setup/
+RUN chmod 777 /tmp && chmod +t /tmp && \
+    /tmp/setup/mssql-extension.sh
+
+# Install the PHP OCI8 Extension.
 ENV LD_LIBRARY_PATH /usr/local/instantclient
+ADD root/tmp/setup/oci8-extension.sh /tmp/setup/
+RUN chmod 777 /tmp && chmod +t /tmp && \
+    /tmp/setup/oci8-extension.sh
 
 RUN mkdir /var/www/moodledata && chown www-data /var/www/moodledata && \
     mkdir /var/www/phpunitdata && chown www-data /var/www/phpunitdata && \

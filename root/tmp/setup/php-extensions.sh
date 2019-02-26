@@ -7,7 +7,7 @@ echo "Installing apt dependencies"
 # Build packages will be added during the build, but will be removed at the end.
 BUILD_PACKAGES="gettext gnupg libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev \
   libldap2-dev libmariadbclient-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev \
-  unixodbc-dev zlib1g-dev"
+  zlib1g-dev"
 
 # Packages for Postgres.
 PACKAGES_POSTGRES="libpq5"
@@ -63,15 +63,6 @@ pecl install solr memcached redis apcu igbinary
 docker-php-ext-enable solr memcached redis apcu igbinary
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
-
-# Install Microsoft dependcies for sqlsrv.
-curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-curl https://packages.microsoft.com/config/debian/9/prod.list -o /etc/apt/sources.list.d/mssql-release.list
-apt-get update
-ACCEPT_EULA=Y apt-get install -y msodbcsql17
-
-pecl install sqlsrv
-docker-php-ext-enable sqlsrv
 
 # Keep our image size down..
 pecl clear-cache
