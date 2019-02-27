@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -Eeo pipefail
+
+# This is a wrapper around NVM to load the nvm functions, and then run nvm.
+
+if [ -z "$(LC_ALL=C type -t nvm)" ] || [ "$(LC_ALL=C type -t nvm)" != function ]
+then
+  # The `nvm` variable does not exist, or is not a function.
+  # Source nvm.sh to load it.
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+fi
+
+nvm $@
