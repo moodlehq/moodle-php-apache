@@ -2,16 +2,13 @@
 
 A Moodle PHP environment configured for Moodle development based on [Official PHP Images](https://hub.docker.com/_/php/).
 
-### Versions
+### Version <span style="color:darkred">(EOL, out of support!)</span>
 
 | PHP Version  | Variant | Tags             | Status |
 |--------------|---------|------------------|--------|
-| PHP 7.1      | Stretch | 7.1, 7.1-stretch | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=7.1-stretch)](https://travis-ci.org/moodlehq/moodle-php-apache)|
-| PHP 7.0      | Stretch | 7.0, 7.0-stretch | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=7.0-stretch)](https://travis-ci.org/moodlehq/moodle-php-apache)|
-| PHP 5.6      | Stretch | 5.6, 5.6-stretch | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=5.6-stretch)](https://travis-ci.org/moodlehq/moodle-php-apache)|
 | PHP 7.1      | Jessie  | 7.1-jessie       | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=7.1-jessie)](https://travis-ci.org/moodlehq/moodle-php-apache)|
-| PHP 7.0      | Jessie  | 7.0-jessie       | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=7.0-jessie)](https://travis-ci.org/moodlehq/moodle-php-apache)|
-| PHP 5.6      | Jessie  | 5.6-jessie       | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=5.6-jessie)](https://travis-ci.org/moodlehq/moodle-php-apache)|
+
+For a complete list of supported versions, look to the [master README](https://github.com/moodlehq/moodle-php-apache/tree/master).
 
 # Example usage
 The following command will expose the current working directory on port 8080:
