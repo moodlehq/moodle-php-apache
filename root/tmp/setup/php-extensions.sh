@@ -34,13 +34,13 @@ docker-php-ext-install -j$(nproc) gd
 docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
-pecl install solr memcache redis mongodb igbinary apcu-4.0.11 memcached-2.2.0
+pecl install solr memcache redis mongodb igbinary-2.0.8 apcu-4.0.11 memcached-2.2.0
 docker-php-ext-enable solr memcache memcached redis mongodb apcu igbinary
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 
 echo "Downloading freedts files"
-curl http://www.freetds.org/files/stable/freetds-1.00.33.tar.gz -o /tmp/freetds-1.00.33.tar.gz
+curl https://www.freetds.org/files/stable/freetds-1.00.33.tar.gz -o /tmp/freetds-1.00.33.tar.gz
 
 echo "Building mssql extension"
 cd /tmp && tar -xvf freetds-1.00.33.tar.gz && cd freetds-1.00.33 \
