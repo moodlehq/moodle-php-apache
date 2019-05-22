@@ -5,7 +5,7 @@ set -e
 # Install 2.4.0 release version + macports patch. Only combination working right now.
 # See #16 and #19 for more information.
 hash=6e9e097c981e810d452657f23bf1945b7955f3cf
-patch=https://raw.githubusercontent.com/macports/macports-ports/master/php/php-solr/files/php72.patch
+patch=https://raw.githubusercontent.com/macports/macports-ports/ed5c081eee78cbcc0f893cb845b20d9d98b3771c/php/php-solr/files/php72.patch
 
 # Download our 'tagged' source code from git.
 echo "Downloading solr extension source archive (${hash})"
