@@ -60,7 +60,7 @@ docker-php-ext-install -j$(nproc) ldap
 
 # Memcached, MongoDB, Redis, APCu, igbinary.
 pecl install memcached mongodb redis apcu igbinary
-docker-php-ext-enable memcached redis apcu igbinary
+docker-php-ext-enable memcached mongodb redis apcu igbinary
 
 # ZIP
 docker-php-ext-configure zip --with-libzip
