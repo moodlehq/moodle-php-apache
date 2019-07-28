@@ -84,7 +84,9 @@ echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 # Install Microsoft dependencies for sqlsrv.
 # (kept apart for clarity, still need to be run here
 # before some build packages are deleted)
-/tmp/setup/sqlsrv-extension.sh
+# NOTE: As of 20190727 5.6.1 does not build with php7.4beta1, so commented out.
+# Link: https://github.com/microsoft/msphpsql/issues/999
+# /tmp/setup/sqlsrv-extension.sh
 
 # Keep our image size down..
 pecl clear-cache
