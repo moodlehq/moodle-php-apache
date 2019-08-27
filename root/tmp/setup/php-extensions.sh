@@ -85,6 +85,8 @@ echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 # (kept apart for clarity, still need to be run here
 # before some build packages are deleted)
 # NOTE: As of 20190727 5.6.1 does not build with php7.4beta1, so commented out.
+# NOTE: As of 20190827 5.6.1 does not build with php7.4beta4, so commented out.
+# The underlying issue has been fixed but there isn't any > 5.6.1 release including it.
 # Link: https://github.com/microsoft/msphpsql/issues/999
 # /tmp/setup/sqlsrv-extension.sh
 
