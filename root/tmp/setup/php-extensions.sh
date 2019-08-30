@@ -13,10 +13,10 @@ BUILD_PACKAGES="gettext gnupg libcurl4-openssl-dev libfreetype6-dev libicu-dev l
 PACKAGES_POSTGRES="libpq5"
 
 # Packages for MariaDB and MySQL.
-PACKAGES_MYMARIA="libmariadbclient18"
+PACKAGES_MYMARIA="libmariadb3"
 
 # Packages for other Moodle runtime dependenices.
-PACKAGES_RUNTIME="ghostscript libaio1 libcurl3 libgss3 libicu57 libmcrypt-dev libxml2 libxslt1.1 \
+PACKAGES_RUNTIME="ghostscript libaio1 libcurl4 libgss3 libicu63 libmcrypt-dev libxml2 libxslt1.1 \
   libzip-dev locales sassc unixodbc unzip zip"
 
 # Packages for Memcached.
@@ -59,7 +59,7 @@ docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
 # Memcached, MongoDB, Redis, APCu, igbinary.
-pecl install memcached mongodb redis-4.3.0 apcu igbinary
+pecl install memcached mongodb redis apcu igbinary
 docker-php-ext-enable memcached mongodb redis apcu igbinary
 
 # ZIP
