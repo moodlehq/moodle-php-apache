@@ -6,7 +6,7 @@ A Moodle PHP environment configured for Moodle development based on [Official PH
 
 | PHP Version  | Variant | Tags             | Status |
 |--------------|---------|------------------|--------|
-| PHP 7.2      | Buster  | 7.2-buster       | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=7.2-buster)](https://travis-ci.org/moodlehq/moodle-php-apache)|
+| PHP 7.2      | Buster  | 7.2, 7.2-buster  | [![Build Status](https://travis-ci.org/moodlehq/moodle-php-apache.svg?branch=7.2-buster)](https://travis-ci.org/moodlehq/moodle-php-apache)|
 
 For a complete list of supported versions, look to the [master README](https://github.com/moodlehq/moodle-php-apache/tree/master).
 
