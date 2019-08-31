@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+# A space-separated list of additional tags to place on this image.
+additionalTags=(7.3)
+
+# Tag and push image for each additional tag
+for tag in ${additionalTags[@]}; do
+    echo "Tagging {$IMAGE_NAME} as ${DOCKER_REPO}:${tag}"
+    docker tag $IMAGE_NAME ${DOCKER_REPO}:${tag}
+
+    echo "Pushing ${DOCKER_REPO}:${tag}"
+    docker push ${DOCKER_REPO}:${tag}
+done
