@@ -18,6 +18,7 @@ $requiredextensions = [
     'xsl',
     'xmlrpc',
     'zip',
+    'uuid'
 ];
 
 $buffer = '';;
