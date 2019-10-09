@@ -7,7 +7,7 @@ echo "Installing apt dependencies"
 # Build packages will be added during the build, but will be removed at the end.
 BUILD_PACKAGES="gettext gnupg libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev \
   libldap2-dev libmariadbclient-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev \
-  unixodbc-dev"
+  unixodbc-dev uuid-dev"
 
 # Packages for Postgres.
 PACKAGES_POSTGRES="libpq5"
@@ -59,8 +59,8 @@ docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
 # Memcached, MongoDB, Redis, APCu, igbinary.
-pecl install memcached mongodb redis apcu igbinary
-docker-php-ext-enable memcached mongodb redis apcu igbinary
+pecl install memcached mongodb redis apcu igbinary uuid
+docker-php-ext-enable memcached mongodb redis apcu igbinary uuid
 
 # ZIP
 docker-php-ext-configure zip --with-zip
