@@ -7,7 +7,7 @@ echo "Installing apt dependencies"
 # Build packages will be added during the build, but will be removed at the end.
 BUILD_PACKAGES="gettext gnupg libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev \
   libldap2-dev libmariadbclient-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev \
-  unixodbc-dev"
+  unixodbc-dev uuid-dev"
 
 # Packages for Postgres.
 PACKAGES_POSTGRES="libpq5"
@@ -51,7 +51,7 @@ docker-php-ext-install -j$(nproc) \
     xmlrpc
 
 # GD.
-docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
 docker-php-ext-install -j$(nproc) gd
 
 # LDAP.
@@ -59,11 +59,11 @@ docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
 # Memcached, MongoDB, Redis, APCu, igbinary.
-pecl install memcached mongodb redis apcu igbinary
-docker-php-ext-enable memcached mongodb redis apcu igbinary
+pecl install memcached mongodb redis apcu igbinary uuid
+docker-php-ext-enable memcached mongodb redis apcu igbinary uuid
 
 # ZIP
-docker-php-ext-configure zip --with-libzip
+docker-php-ext-configure zip --with-zip
 docker-php-ext-install zip
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
