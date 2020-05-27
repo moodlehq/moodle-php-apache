@@ -3,22 +3,21 @@
 set -e
 
 echo "Downloading oracle files"
-curl https://raw.githubusercontent.com/AminMkh/docker-php7-oci8-apache/b7c740638776552f00178a5d12905cefb50c7848/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip\
-    -o /tmp/instantclient-basic-linux.x64-12.1.0.2.0.zip
-curl https://raw.githubusercontent.com/AminMkh/docker-php7-oci8-apache/b7c740638776552f00178a5d12905cefb50c7848/oracle/instantclient-sdk-linux.x64-12.1.0.2.0.zip\
-    -o /tmp/instantclient-sdk-linux.x64-12.1.0.2.0.zip
-curl https://raw.githubusercontent.com/AminMkh/docker-php7-oci8-apache/b7c740638776552f00178a5d12905cefb50c7848/oracle/instantclient-sqlplus-linux.x64-12.1.0.2.0.zip\
-    -o /tmp/instantclient-sqlplus-linux.x64-12.1.0.2.0.zip
+curl https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip \
+    -o /tmp/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip
+curl https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip \
+    -o /tmp/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip
+curl https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-sqlplus-linux.x64-19.6.0.0.0dbru.zip \
+    -o /tmp/instantclient-sqlplus-linux.x64-19.6.0.0.0dbru.zip
 
-unzip /tmp/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /usr/local/
-rm /tmp/instantclient-basic-linux.x64-12.1.0.2.0.zip
-unzip /tmp/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /usr/local/
-rm /tmp/instantclient-sdk-linux.x64-12.1.0.2.0.zip
-unzip /tmp/instantclient-sqlplus-linux.x64-12.1.0.2.0.zip -d /usr/local/
-rm /tmp/instantclient-sqlplus-linux.x64-12.1.0.2.0.zip
+unzip /tmp/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip -d /usr/local/
+rm /tmp/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip
+unzip /tmp/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip -d /usr/local/
+rm /tmp/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip
+unzip /tmp/instantclient-sqlplus-linux.x64-19.6.0.0.0dbru.zip -d /usr/local/
+rm /tmp/instantclient-sqlplus-linux.x64-19.6.0.0.0dbru.zip
 
-ln -s /usr/local/instantclient_12_1 /usr/local/instantclient
-ln -s /usr/local/instantclient/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
+ln -s /usr/local/instantclient_19_6 /usr/local/instantclient
 ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
 
 echo 'instantclient,/usr/local/instantclient' | pecl install oci8 && docker-php-ext-enable oci8
