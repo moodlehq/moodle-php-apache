@@ -47,8 +47,8 @@ docker-php-ext-install -j$(nproc) \
     opcache \
     pgsql \
     soap \
-    xsl \
-    xmlrpc
+    xsl
+#    xmlrpc  -- not existing as of 8.0.0alpha3
 
 # GD.
 docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
@@ -59,8 +59,8 @@ docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
 # Memcached, MongoDB, Redis, APCu, igbinary.
-pecl install memcached mongodb redis apcu igbinary uuid
-docker-php-ext-enable memcached mongodb redis apcu igbinary uuid
+#pecl install memcached mongodb redis apcu igbinary uuid -- pecl not existing as of 8.0.0alpha3
+#docker-php-ext-enable memcached mongodb redis apcu igbinary uuid -- pecl not existing as of 8.0.0alpha3
 
 # ZIP
 docker-php-ext-configure zip --with-zip
@@ -79,15 +79,15 @@ echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 # References:
 #   - https://github.com/moodlehq/moodle-php-apache/issues/16 (part of the php72 image discussion)
 #   - https://github.com/moodlehq/moodle-php-apache/issues/19 (awaiting for a better solution)
-/tmp/setup/solr-extension.sh
+# /tmp/setup/solr-extension.sh -- pecl not existing as of 8.0.0alpha3
 
 # Install Microsoft dependencies for sqlsrv.
 # (kept apart for clarity, still need to be run here
 # before some build packages are deleted)
-/tmp/setup/sqlsrv-extension.sh
+#/tmp/setup/sqlsrv-extension.sh -- pecl not existing as of 8.0.0alpha3
 
 # Keep our image size down..
-pecl clear-cache
+# pecl clear-cache -- pecl not existing as of 8.0.0alpha3
 apt-get remove --purge -y $BUILD_PACKAGES
 apt-get autoremove -y
 apt-get clean
