@@ -48,7 +48,7 @@ docker-php-ext-install -j$(nproc) \
     pgsql \
     soap \
     xsl
-#    xmlrpc  -- not existing as of 8.0.0alpha3
+#    xmlrpc  -- not existing as of 8.0.0beta1
 
 # GD.
 docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
@@ -59,8 +59,8 @@ docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
 # Memcached, MongoDB, Redis, APCu, igbinary.
-#pecl install memcached mongodb redis apcu igbinary uuid -- pecl not existing as of 8.0.0alpha3
-#docker-php-ext-enable memcached mongodb redis apcu igbinary uuid -- pecl not existing as of 8.0.0alpha3
+#pecl install memcached mongodb redis apcu igbinary uuid  -- not existing as of 8.0.0beta1
+#docker-php-ext-enable memcached mongodb redis apcu igbinary uuid  -- not existing as of 8.0.0beta1
 
 # ZIP
 docker-php-ext-configure zip --with-zip
@@ -87,7 +87,7 @@ echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 #/tmp/setup/sqlsrv-extension.sh -- pecl not existing as of 8.0.0alpha3
 
 # Keep our image size down..
-# pecl clear-cache -- pecl not existing as of 8.0.0alpha3
+#pecl clear-cache   -- not existing as of 8.0.0beta1
 apt-get remove --purge -y $BUILD_PACKAGES
 apt-get autoremove -y
 apt-get clean
