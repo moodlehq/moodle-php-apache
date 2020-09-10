@@ -41,6 +41,10 @@ echo 'en_AU.UTF-8 UTF-8' >> /etc/locale.gen
 locale-gen
 
 echo "Installing php extensions"
+
+# ZIP
+docker-php-ext-configure zip --with-zip
+docker-php-ext-install zip
 docker-php-ext-install -j$(nproc) \
     intl \
     mysqli \
@@ -48,7 +52,7 @@ docker-php-ext-install -j$(nproc) \
     pgsql \
     soap \
     xsl
-#    xmlrpc  -- not existing as of 8.0.0beta1
+#    xmlrpc  -- not existing as of 8.0.0beta3
 
 # GD.
 docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
@@ -58,13 +62,14 @@ docker-php-ext-install -j$(nproc) gd
 docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
-# Memcached, MongoDB, Redis, APCu, igbinary.
-#pecl install memcached mongodb redis apcu igbinary uuid  -- not existing as of 8.0.0beta1
-#docker-php-ext-enable memcached mongodb redis apcu igbinary uuid  -- not existing as of 8.0.0beta1
-
-# ZIP
-docker-php-ext-configure zip --with-zip
-docker-php-ext-install zip
+# Memcached, MongoDB, Redis, APCu, igbinary, solr, uuid.
+pickle install memcached && docker-php-ext-enable memcached
+#pickle install mongodb -- not existing as of 8.0.0beta3
+#pickle install redis -- not existing as of 8.0.0beta3
+pickle install apcu && docker-php-ext-enable apcu
+pickle install igbinary && docker-php-ext-enable igbinary
+pickle install solr && docker-php-ext-enable solr
+pickle install uuid && docker-php-ext-enable uuid
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 
@@ -79,15 +84,14 @@ echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 # References:
 #   - https://github.com/moodlehq/moodle-php-apache/issues/16 (part of the php72 image discussion)
 #   - https://github.com/moodlehq/moodle-php-apache/issues/19 (awaiting for a better solution)
-# /tmp/setup/solr-extension.sh -- pecl not existing as of 8.0.0alpha3
+#/tmp/setup/solr-extension.sh -- not existing as of 8.0.0beta3
 
 # Install Microsoft dependencies for sqlsrv.
 # (kept apart for clarity, still need to be run here
 # before some build packages are deleted)
-#/tmp/setup/sqlsrv-extension.sh -- pecl not existing as of 8.0.0alpha3
+# /tmp/setup/sqlsrv-extension.sh -- not existing as of 8.0.0beta3
 
 # Keep our image size down..
-#pecl clear-cache   -- not existing as of 8.0.0beta1
 apt-get remove --purge -y $BUILD_PACKAGES
 apt-get autoremove -y
 apt-get clean
