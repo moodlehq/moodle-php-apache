@@ -45,6 +45,7 @@ echo "Installing php extensions"
 # ZIP
 docker-php-ext-configure zip --with-zip
 docker-php-ext-install zip
+
 docker-php-ext-install -j$(nproc) \
     intl \
     mysqli \
@@ -72,19 +73,6 @@ pickle install solr && docker-php-ext-enable solr
 pickle install uuid && docker-php-ext-enable uuid
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
-
-# Install custom solr extension. Last release (2.4.0) is not working at all
-# with php72 and php73 and upstream has not either! Solution:
-#   - current master (as of 21th May 2019):
-#     https://github.com/php/pecl-search_engine-solr/commit/98a8bf540bcb4e9b2e1378cce2f3a9bf6cd772b8
-#   - this patch, applied already upstream:
-#     https://github.com/php/pecl-search_engine-solr/commit/744e32915d5989101267ed2c84a407c582dc6f31
-# So, following the experience with Macports, and https://bugs.php.net/bug.php?id=75631
-# we are going to try 2.4.0 release + macports patch. Old, but working right now.
-# References:
-#   - https://github.com/moodlehq/moodle-php-apache/issues/16 (part of the php72 image discussion)
-#   - https://github.com/moodlehq/moodle-php-apache/issues/19 (awaiting for a better solution)
-#/tmp/setup/solr-extension.sh -- not existing as of 8.0.0beta3
 
 # Install Microsoft dependencies for sqlsrv.
 # (kept apart for clarity, still need to be run here
