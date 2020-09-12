@@ -58,9 +58,9 @@ docker-php-ext-install -j$(nproc) gd
 docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
-# SOLR, Memcached, Redis, APCu, igbinary.
-pecl install solr memcached mongodb redis apcu igbinary uuid
-docker-php-ext-enable solr memcached mongodb redis apcu igbinary uuid
+# Memcached, MongoDB, Redis, APCu, igbinary.
+pecl install memcached mongodb redis apcu igbinary uuid
+docker-php-ext-enable memcached mongodb redis apcu igbinary uuid
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 
@@ -72,6 +72,19 @@ ACCEPT_EULA=Y apt-get install -y msodbcsql17
 
 pecl install sqlsrv-5.6.1
 docker-php-ext-enable sqlsrv
+
+# Install custom solr extension. Last release (2.4.0) is not working at all
+# with php72 and php73 and upstream has not either! Solution:
+#   - current master (as of 21th May 2019):
+#     https://github.com/php/pecl-search_engine-solr/commit/98a8bf540bcb4e9b2e1378cce2f3a9bf6cd772b8
+#   - this patch, applied already upstream:
+#     https://github.com/php/pecl-search_engine-solr/commit/744e32915d5989101267ed2c84a407c582dc6f31
+# So, following the experience with Macports, and https://bugs.php.net/bug.php?id=75631
+# we are going to try 2.4.0 release + macports patch. Old, but working right now.
+# References:
+#   - https://github.com/moodlehq/moodle-php-apache/issues/16 (part of the php72 image discussion)
+#   - https://github.com/moodlehq/moodle-php-apache/issues/19 (awaiting for a better solution)
+/tmp/setup/solr-extension.sh
 
 # Keep our image size down..
 pecl clear-cache
