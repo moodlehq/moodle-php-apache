@@ -1,4 +1,4 @@
-FROM php:8.0.0rc1-apache-buster
+FROM php:8.0.0RC4-apache-buster
 
 ADD root/ /
 # Fix the original permissions of /tmp, the PHP default upload tmp dir.
@@ -23,7 +23,7 @@ RUN curl -L https://github.com/FriendsOfPHP/pickle/releases/download/v0.6.0/pick
 # Setup the required extensions.
 ARG DEBIAN_FRONTEND=noninteractive
 RUN /tmp/setup/php-extensions.sh
-# RUN /tmp/setup/oci8-extension.sh -- not existing as of 8.0.0rc1 - No news about it @ PECL.
+# RUN /tmp/setup/oci8-extension.sh -- not existing as of 8.0.0RC4 - No news about it @ PECL.
 ENV LD_LIBRARY_PATH /usr/local/instantclient
 
 RUN mkdir /var/www/moodledata && chown www-data /var/www/moodledata && \
