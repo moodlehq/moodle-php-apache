@@ -63,21 +63,20 @@ docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
 # Memcached, MongoDB, Redis, APCu, igbinary, solr, uuid.
-pickle install memcached && docker-php-ext-enable memcached
-pickle install redis && docker-php-ext-enable redis
-pickle install mongodb && docker-php-ext-enable mongodb
-#pickle install xmlrpc && docker-php-ext-enable xmlrpc -- not existing as of 8.0.0RC5 (not yet @ PECL, https://php.watch/versions/8.0#xmlrpc)
-pickle install apcu && docker-php-ext-enable apcu
-pickle install igbinary && docker-php-ext-enable igbinary
-pickle install solr && docker-php-ext-enable solr
-pickle install uuid && docker-php-ext-enable uuid
+pecl install memcached mongodb redis apcu igbinary solr uuid
+docker-php-ext-enable memcached mongodb redis apcu igbinary solr uuid
+
+# xmlrpc -- not existing as of 8.0.0RC5 (not yet @ PECL, https://php.watch/versions/  8.0#xmlrpc)
+# (once available add it to the previous pecl command)
+#pecl install xmlrpc
+#docker-php-ext-enable xmlrpc
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 
 # Install Microsoft dependencies for sqlsrv.
 # (kept apart for clarity, still need to be run here
 # before some build packages are deleted)
-#/tmp/setup/sqlsrv-extension.sh -- not existing as of 8.0.0RC5 (will need version 5.9.0, still not there)
+/tmp/setup/sqlsrv-extension.sh
 
 # Keep our image size down..
 apt-get remove --purge -y $BUILD_PACKAGES

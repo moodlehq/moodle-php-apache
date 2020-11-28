@@ -15,10 +15,13 @@ RUN apt-get update && apt-get install -y \
 #  - https://github.com/FriendsOfPHP/pickle
 #  - manually "curl https://pecl.php.net/get/xxxx && tar && docker-php-ext-install xxx"
 # Of course, if the images end using some alternative, we'll switch to it. Just right now
-# there isn't such an alternative.
-RUN curl -L https://github.com/FriendsOfPHP/pickle/releases/download/v0.6.0/pickle.phar -o pickle.phar && \
-    chmod +x pickle.phar && \
-    mv pickle.phar /usr/local/bin/pickle
+# there isn't such an alternative.a
+#
+# Update 20201126: Finally, see https://github.com/docker-library/php/issues/1087 it seems that pear/pecl
+# continues being availbale with php8, so we are going to continue using it. The previous comments as
+# left in case we need to find an alternative way to install PECL stuff and there isn't any official.
+# For an example of php80-rc5 near complete, using pickle instead of pear/pecl, look to:
+# https://github.com/stronk7/moodle-php-apache/tree/8.0-buster-pickle-version
 
 # Setup the required extensions.
 ARG DEBIAN_FRONTEND=noninteractive
