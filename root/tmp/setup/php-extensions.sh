@@ -41,14 +41,18 @@ echo 'en_AU.UTF-8 UTF-8' >> /etc/locale.gen
 locale-gen
 
 echo "Installing php extensions"
+
+# ZIP
+docker-php-ext-configure zip --with-zip
+docker-php-ext-install zip
+
 docker-php-ext-install -j$(nproc) \
     intl \
     mysqli \
     opcache \
     pgsql \
     soap \
-    xsl \
-    xmlrpc
+    xsl
 
 # GD.
 docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
@@ -58,13 +62,14 @@ docker-php-ext-install -j$(nproc) gd
 docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 docker-php-ext-install -j$(nproc) ldap
 
-# Memcached, MongoDB, Redis, APCu, igbinary, solr, uuid
+# Memcached, MongoDB, Redis, APCu, igbinary, solr, uuid.
 pecl install memcached mongodb redis apcu igbinary solr uuid
 docker-php-ext-enable memcached mongodb redis apcu igbinary solr uuid
 
-# ZIP
-docker-php-ext-configure zip --with-zip
-docker-php-ext-install zip
+# xmlrpc -- not existing as of 8.0.0 release (not yet @ PECL, https://php.watch/versions/  8.0#xmlrpc)
+# (once available add it to the previous pecl command)
+#pecl install xmlrpc
+#docker-php-ext-enable xmlrpc
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 
