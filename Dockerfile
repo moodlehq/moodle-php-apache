@@ -1,4 +1,4 @@
-FROM php:8.0.0RC5-apache-buster
+FROM php:8.0-apache-buster
 
 ADD root/ /
 # Fix the original permissions of /tmp, the PHP default upload tmp dir.

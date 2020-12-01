@@ -17,7 +17,7 @@ $requiredextensions = [
     'solr',
     'sqlsrv',
     'xsl',
-    'xmlrpc',
+    // 'xmlrpc', -- not existing as of 8.0.0 release (not yet @ PECL, https://php.watch/versions/8.0#xmlrpc)
     'zip',
     'uuid'
 ];

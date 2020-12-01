@@ -66,7 +66,7 @@ docker-php-ext-install -j$(nproc) ldap
 pecl install memcached mongodb redis apcu igbinary solr uuid
 docker-php-ext-enable memcached mongodb redis apcu igbinary solr uuid
 
-# xmlrpc -- not existing as of 8.0.0RC5 (not yet @ PECL, https://php.watch/versions/  8.0#xmlrpc)
+# xmlrpc -- not existing as of 8.0.0 release (not yet @ PECL, https://php.watch/versions/  8.0#xmlrpc)
 # (once available add it to the previous pecl command)
 #pecl install xmlrpc
 #docker-php-ext-enable xmlrpc
@@ -79,6 +79,7 @@ echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 /tmp/setup/sqlsrv-extension.sh
 
 # Keep our image size down..
+pecl clear-cache
 apt-get remove --purge -y $BUILD_PACKAGES
 apt-get autoremove -y
 apt-get clean
