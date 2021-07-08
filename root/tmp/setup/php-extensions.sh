@@ -47,6 +47,7 @@ docker-php-ext-configure zip --with-zip
 docker-php-ext-install zip
 
 docker-php-ext-install -j$(nproc) \
+    exif \
     intl \
     mysqli \
     opcache \
