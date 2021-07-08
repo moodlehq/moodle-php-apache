@@ -2,6 +2,7 @@
 
 $requiredextensions = [
     'apcu',
+    'exif',
     'gd',
     'igbinary',
     'intl',
