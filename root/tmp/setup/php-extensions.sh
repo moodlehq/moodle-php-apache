@@ -42,6 +42,7 @@ locale-gen
 
 echo "Installing php extensions"
 docker-php-ext-install -j$(nproc) \
+    exif \
     intl \
     mysqli \
     opcache \
