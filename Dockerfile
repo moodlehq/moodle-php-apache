@@ -1,5 +1,10 @@
 FROM php:7.4-apache-buster
 
+# So we can use it anywhere for conditional stuff. Keeping BC with old (non-buildkit, builders)
+ARG TARGETPLATFORM
+ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
+RUN echo "Building for ${TARGETPLATFORM}"
+
 ADD root/ /
 # Fix the original permissions of /tmp, the PHP default upload tmp dir.
 RUN chmod 777 /tmp && chmod +t /tmp
