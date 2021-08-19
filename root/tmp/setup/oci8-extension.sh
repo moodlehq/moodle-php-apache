@@ -2,6 +2,11 @@
 
 set -e
 
+if [[ ${TARGETPLATFORM} != "linux/amd64" ]]; then
+    echo "oracle extension not available for ${TARGETPLATFORM} architecture, skipping"
+    exit 0
+fi
+
 echo "Downloading oracle files"
 curl https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip \
     -o /tmp/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip

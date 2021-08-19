@@ -56,7 +56,7 @@ docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/inclu
 docker-php-ext-install -j$(nproc) gd
 
 # LDAP.
-docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
+docker-php-ext-configure ldap
 docker-php-ext-install -j$(nproc) ldap
 
 # Memcached, MongoDB, Redis, APCu, igbinary, solr, uuid
@@ -72,7 +72,11 @@ echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 # Install Microsoft dependencies for sqlsrv.
 # (kept apart for clarity, still need to be run here
 # before some build packages are deleted)
-/tmp/setup/sqlsrv-extension.sh
+if [[ ${TARGETPLATFORM} == "linux/amd64" ]]; then
+    /tmp/setup/sqlsrv-extension.sh
+else
+    echo "sqlsrv extension not available for ${TARGETPLATFORM} architecture, skipping"
+fi
 
 # Keep our image size down..
 pecl clear-cache
