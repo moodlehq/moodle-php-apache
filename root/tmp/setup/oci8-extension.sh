@@ -2,6 +2,11 @@
 
 set -e
 
+if [[ ${TARGETPLATFORM} != "linux/amd64" ]]; then
+    echo "oracle extension not available for ${TARGETPLATFORM} architecture, skipping"
+    exit 0
+fi
+
 echo "Downloading oracle files"
 curl https://raw.githubusercontent.com/AminMkh/docker-php7-oci8-apache/b7c740638776552f00178a5d12905cefb50c7848/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip\
     -o /tmp/instantclient-basic-linux.x64-12.1.0.2.0.zip
