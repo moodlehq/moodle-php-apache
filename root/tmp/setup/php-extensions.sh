@@ -63,20 +63,24 @@ docker-php-ext-install -j$(nproc) gd
 docker-php-ext-configure ldap
 docker-php-ext-install -j$(nproc) ldap
 
-# APCu, igbinary, Memcached, MongoDB, Redis, Solr, uuid, XMLRPC (beta)
-pecl install apcu igbinary memcached mongodb redis solr uuid xmlrpc-beta
-docker-php-ext-enable apcu igbinary memcached mongodb redis solr uuid xmlrpc
+# APCu, igbinary, Memcached, Redis, Solr, uuid
+pecl install apcu igbinary memcached redis solr uuid
+docker-php-ext-enable apcu igbinary memcached redis solr uuid
+#TODO:
+#  - mongodb failing as of 2021-08-22. Add it back once working.
+#  - xmlrpc failing as of 2021-08-22. Add it back once working.
+#  - sqlsrv as of 2021-08-22. Add it back once working.
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 
 # Install Microsoft dependencies for sqlsrv.
 # (kept apart for clarity, still need to be run here
 # before some build packages are deleted)
-if [[ ${TARGETPLATFORM} == "linux/amd64" ]]; then
-    /tmp/setup/sqlsrv-extension.sh
-else
-    echo "sqlsrv extension not available for ${TARGETPLATFORM} architecture, skipping"
-fi
+#if [[ ${TARGETPLATFORM} == "linux/amd64" ]]; then
+#    /tmp/setup/sqlsrv-extension.sh
+#else
+#    echo "sqlsrv extension not available for ${TARGETPLATFORM} architecture, skipping"
+#fi
 
 # Keep our image size down..
 pecl clear-cache
