@@ -64,13 +64,18 @@ docker-php-ext-configure ldap
 docker-php-ext-install -j$(nproc) ldap
 
 # APCu, igbinary, Memcached, Redis, Solr, uuid
-pecl install apcu igbinary memcached redis solr uuid
-docker-php-ext-enable apcu igbinary memcached redis solr uuid
+pecl install apcu igbinary memcached redis solr uuid pcov
+docker-php-ext-enable apcu igbinary memcached redis solr uuid pcov
 #TODO:
 #  - mongodb failing as of 2021-09-19. Add it back once working.
 #  - xmlrpc failing as of 2021-09-19. Add it back once working.
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
+
+echo "pcov.enabled=0" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
+echo "pcov.exclude='~\/(tests|coverage|vendor|node_modules)\/~'" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
+echo "pcov.directory=." >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
+echo "pcov.initial.files=1024" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
 
 # Install Microsoft dependencies for sqlsrv.
 # (kept apart for clarity, still need to be run here
