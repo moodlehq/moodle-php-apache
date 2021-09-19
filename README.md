@@ -6,7 +6,7 @@ A Moodle PHP environment configured for Moodle development based on [Official PH
 
 | PHP Version  | Variant | Tags             | Status |
 |--------------|---------|------------------|--------|
-| PHP 8.1      | Buster  | 8.1beta3  | [![Build Status](https://travis-ci.com/moodlehq/moodle-php-apache.svg?branch=8.1-buster)](https://travis-ci.com/moodlehq/moodle-php-apache)|
+| PHP 8.1      | Buster  | 8.1rc2           | [![Build Status](https://travis-ci.com/moodlehq/moodle-php-apache.svg?branch=8.1-buster)](https://travis-ci.com/moodlehq/moodle-php-apache)|
 
 For a complete list of supported versions, look to the [master README](https://github.com/moodlehq/moodle-php-apache/tree/master).
 
