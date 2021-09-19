@@ -55,7 +55,7 @@ jobs:
             latest=false
           tags: |
             type=raw,value={{branch}}
-            type=match,pattern=(\d+.\d+),value={{branch}}
+            # Not the default yet (buster is): type=match,pattern=(\d+.\d+),value={{branch}}
 
       # https://github.com/docker/setup-qemu-action#usage
       - name: Set up QEMU
