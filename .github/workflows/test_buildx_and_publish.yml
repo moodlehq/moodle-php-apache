@@ -1,6 +1,6 @@
-name: Docker multiarch publish
+name: Docker test and multiarch build and publish
 
-on: push
+on: [push, pull_request]
 
 env:
   REPOSITORY: moodle-php-apache
@@ -8,9 +8,37 @@ env:
   GH_OWNER: moodlehq
 
 jobs:
-  Build:
-    # Completely avoid forks to try this workflow.
-    if: github.repository_owner == 'moodlehq'
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build image
+        run: |
+          docker build . -t moodle-php-apache
+
+      - name: Run tests
+        continue-on-error: true
+        run: |
+          docker run --name test0 -d -p 8000:80 -v $PWD/tests/fixtures:/var/www/html moodle-php-apache
+          docker exec test0 php /var/www/html/test.php
+          curl --fail http://127.0.0.1:8000/test.php
+
+      - name: Display container logs on failure
+        if: failure()
+        run: |
+          docker logs test0
+
+      - name: Cleanup docker images
+        run: |
+          docker rm -f test0
+
+  Publish:
+    # Completely avoid forks and pull requests to try this job.
+    if: github.repository_owner == 'moodlehq' && github.event_name == 'push'
+    # Requires Test to pass
+    needs: Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
