@@ -1,4 +1,4 @@
-name: Docker test and multiarch build and publish
+name: Test and publish
 
 on: [push, pull_request]
 
@@ -19,7 +19,6 @@ jobs:
           docker build . -t moodle-php-apache
 
       - name: Run tests
-        continue-on-error: true
         run: |
           docker run --name test0 -d -p 8000:80 -v $PWD/tests/fixtures:/var/www/html moodle-php-apache
           docker exec test0 php /var/www/html/test.php
