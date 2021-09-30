@@ -7,7 +7,8 @@ set -e
 # https://github.com/Microsoft/msphpsql/wiki/Install-and-configuration#user-content-odbc-17-linux-installation
 echo "Downloading sqlsrv files"
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-curl https://packages.microsoft.com/config/debian/9/prod.list -o /etc/apt/sources.list.d/mssql-release.list
+# TODO, bullseye should be 11, but the msodbcsql17 package is not available yet, hence using buster (10) one.
+curl https://packages.microsoft.com/config/debian/10/prod.list -o /etc/apt/sources.list.d/mssql-release.list
 apt-get update
 
 echo "Install msodbcsql"
