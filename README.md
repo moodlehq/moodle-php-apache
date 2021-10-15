@@ -6,7 +6,7 @@ A Moodle PHP environment configured for Moodle development based on [Official PH
 
 | PHP Version  | Variant | Tags             | Status |
 |--------------|---------|------------------|--------|
-| PHP 8.0      | Buster  | 8.0, 8.0-buster  | [![Test and publish 8.0](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.0-buster)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)|
+| PHP 8.0      | Buster  | 8.0-buster       | [![Test and publish 8.0](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.0-buster)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)|
 
 For a complete list of supported versions, look to the [master README](https://github.com/moodlehq/moodle-php-apache/tree/master).
 
