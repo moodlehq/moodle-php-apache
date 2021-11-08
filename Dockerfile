@@ -1,6 +1,6 @@
 FROM php:7.3-apache-buster
 
-# So we can use it anywhere for conditional stuff. Keeping BC with old (non-buildkit, builders)
+# So we can use it anywhere for conditional stuff. Keeping BC with old (non-buildkit, builders).
 ARG TARGETPLATFORM
 ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
 RUN echo "Building for ${TARGETPLATFORM}"
