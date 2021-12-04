@@ -63,11 +63,9 @@ docker-php-ext-install -j$(nproc) gd
 docker-php-ext-configure ldap
 docker-php-ext-install -j$(nproc) ldap
 
-# APCu, igbinary, Memcached, Redis, Solr, uuid
-pecl install apcu igbinary memcached mongodb redis solr uuid pcov
-docker-php-ext-enable apcu igbinary memcached redis solr uuid pcov
-#TODO:
-#  - xmlrpc failing as of 2021-11-21. Add it back once working.
+# APCu, igbinary, Memcached, MongoDB, Redis, Solr, uuid, XMLRPC (beta)
+pecl install apcu igbinary memcached mongodb pcov redis solr uuid xmlrpc-beta
+docker-php-ext-enable apcu igbinary memcached mongodb pcov redis solr uuid xmlrpc
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 
