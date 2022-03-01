@@ -8,21 +8,21 @@ if [[ ${TARGETPLATFORM} != "linux/amd64" ]]; then
 fi
 
 echo "Downloading oracle files"
-curl https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip \
-    -o /tmp/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip
-curl https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip \
-    -o /tmp/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip
-curl https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-sqlplus-linux.x64-19.6.0.0.0dbru.zip \
-    -o /tmp/instantclient-sqlplus-linux.x64-19.6.0.0.0dbru.zip
+curl https://download.oracle.com/otn_software/linux/instantclient/215000/instantclient-basic-linux.x64-21.5.0.0.0dbru.zip \
+    -o /tmp/instantclient-basic-linux.x64-21.5.0.0.0dbru.zip
+curl https://download.oracle.com/otn_software/linux/instantclient/215000/instantclient-sdk-linux.x64-21.5.0.0.0dbru.zip \
+    -o /tmp/instantclient-sdk-linux.x64-21.5.0.0.0dbru.zip
+curl https://download.oracle.com/otn_software/linux/instantclient/215000/instantclient-sqlplus-linux.x64-21.5.0.0.0dbru.zip \
+    -o /tmp/instantclient-sqlplus-linux.x64-21.5.0.0.0dbru.zip
 
-unzip /tmp/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip -d /usr/local/
-rm /tmp/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip
-unzip /tmp/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip -d /usr/local/
-rm /tmp/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip
-unzip /tmp/instantclient-sqlplus-linux.x64-19.6.0.0.0dbru.zip -d /usr/local/
-rm /tmp/instantclient-sqlplus-linux.x64-19.6.0.0.0dbru.zip
+unzip /tmp/instantclient-basic-linux.x64-21.5.0.0.0dbru.zip-d /usr/local/
+rm /tmp/instantclient-basic-linux.x64-21.5.0.0.0dbru.zip
+unzip /tmp/instantclient-sdk-linux.x64-21.5.0.0.0dbru.zip -d /usr/local/
+rm /tmp/instantclient-sdk-linux.x64-21.5.0.0.0dbru.zip
+unzip /tmp/instantclient-sqlplus-linux.x64-21.5.0.0.0dbru.zip -d /usr/local/
+rm /tmp/instantclient-sqlplus-linux.x64-21.5.0.0.0dbru.zip
 
-ln -s /usr/local/instantclient_19_6 /usr/local/instantclient
+ln -s /usr/local/instantclient_21_5 /usr/local/instantclient
 ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
 
 echo 'instantclient,/usr/local/instantclient' | pecl install oci8
