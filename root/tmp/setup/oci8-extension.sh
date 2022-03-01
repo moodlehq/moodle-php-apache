@@ -15,7 +15,7 @@ curl https://download.oracle.com/otn_software/linux/instantclient/215000/instant
 curl https://download.oracle.com/otn_software/linux/instantclient/215000/instantclient-sqlplus-linux.x64-21.5.0.0.0dbru.zip \
     -o /tmp/instantclient-sqlplus-linux.x64-21.5.0.0.0dbru.zip
 
-unzip /tmp/instantclient-basic-linux.x64-21.5.0.0.0dbru.zip-d /usr/local/
+unzip /tmp/instantclient-basic-linux.x64-21.5.0.0.0dbru.zip -d /usr/local/
 rm /tmp/instantclient-basic-linux.x64-21.5.0.0.0dbru.zip
 unzip /tmp/instantclient-sdk-linux.x64-21.5.0.0.0dbru.zip -d /usr/local/
 rm /tmp/instantclient-sdk-linux.x64-21.5.0.0.0dbru.zip
