@@ -98,8 +98,8 @@ jobs:
       # Note that we only update the description with the master branch version.
       - name: Set Docker Hub description from README.md
         if: github.ref == 'refs/heads/master'
-        uses: peter-evans/dockerhub-description@v2
+        uses: peter-evans/dockerhub-description@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ env.DOCKERHUB_OWNER }}/${{ env.REPOSITORY }}
