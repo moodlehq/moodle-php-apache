@@ -14,6 +14,6 @@ ACCEPT_EULA=Y apt-get install -y msodbcsql17
 
 ln -fsv /opt/mssql-tools/bin/* /usr/bin
 
-# Need 5..10.0beta1 (or later) for PHP 8.1 support
-pecl install sqlsrv-5.10.0
+# Need 5.10.1 (or later) for PHP 8.2 support
+pecl install sqlsrv-5.10.1
 docker-php-ext-enable sqlsrv
