@@ -33,7 +33,7 @@ jobs:
           # Calculate current image version
           # If the branch has has X.Y-xxxxx format, use it as docker tag. Else, use "dev" image (master branch).
           tag=dev
-          if [[ ${{ env.GITHUB_REF_SLUG }} =~ \d+\.\d+\-\w+ ]]; then
+          if [[ "${{ env.GITHUB_REF_SLUG }}" =~ [0-9]+\.[0-9]+\-[a-z]+ ]]; then
               tag=${{ env.GITHUB_REF_SLUG }}
           fi
           echo "LOG: docker tag: $tag"
