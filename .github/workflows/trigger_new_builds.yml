@@ -1,4 +1,4 @@
-name: Trigger new builds based on various criteria.
+name: Trigger new builds
 
 # If any of the criteria happens, they set the trigger_build
 # output variable to 'true' and the rebuild will happen.
@@ -6,8 +6,7 @@ name: Trigger new builds based on various criteria.
 on:
   workflow_dispatch:
   schedule:
-    # Fridays 16:00 UTC
-    - cron: '10 16 * * 5'
+    - cron: '10 16 * * *'
 
 jobs:
 
@@ -48,22 +47,24 @@ jobs:
           echo "LOG: latest: $latest"
 
           # Compare the versions (digits only), if current < latest, then we need to rebuild.
+          result='false'
           if [[ ${current//[!0-9]/} -lt ${latest//[!0-9]/} ]]; then
-              echo "result=true" >> $GITHUB_OUTPUT
+              result='true'
               echo "LOG: timezonedb to trigger image build"
           fi
+          echo "result=$result" >> $GITHUB_OUTPUT
 
   # This job gets the results of all the jobs in the workflow and,
   # if any of them has ended with the "trigger_build" output set, then
   # will set its own (final) trigger_build output to 'true'.
-  evaluate:
+  evaluate-results:
     # Completely avoid forks and pull requests to try this job.
     if: github.repository_owner == 'moodlehq' && contains(fromJson('["workflow_dispatch", "schedule"]'), github.event_name)
     runs-on: ubuntu-latest
     needs: [datetimedb-new-release]
 
     outputs:
-      trigger_build: ${{ steps.evaluate.outputs.trigger }}
+      trigger_build: ${{ steps.evaluate.outputs.result }}
 
     steps:
 
@@ -71,15 +72,17 @@ jobs:
         id: evaluate
         run: |
           # Add here more conditions (ORed) when new criteria are added.
-          if [[ ${{ needs.datetimedb-new-release.outputs.trigger_build }} ]]; then
-              echo "trigger=true" >> $GITHUB_OUTPUT
+          result=false
+          if [[ "${{ needs.datetimedb-new-release.outputs.trigger_build }}" == "true" ]]; then
+              result=true
               echo "LOG: Final evaluation, trigger the build"
           fi
+          echo "result=$result" >> $GITHUB_OUTPUT
 
-  Build:
+  build:
     # Only if the final workflow.outputs.trigger_build from evaluate job has decided to build.
-    if: ${{ needs.evaluate.outputs.trigger_build }} == 'true'
-    needs: [evaluate]
+    if: needs.evaluate-results.outputs.trigger_build == 'true'
+    needs: [evaluate-results]
 
     # Launch the build job (as reusable workflow).
     uses: ./.github/workflows/test_buildx_and_publish.yml
