@@ -1,4 +1,4 @@
-name: Test and publish
+name: Test, build and publish
 
 on:
   push:
@@ -84,7 +84,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # https://github.com/docker/build-push-action#multi-platform-image
-      - name: Build and push to Docker Hub and Github registries
+      - name: Build and publish to Docker Hub and Github registries
         uses: docker/build-push-action@v3
         with:
           context: .
