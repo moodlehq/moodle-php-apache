@@ -57,6 +57,22 @@ docker run \
 
 These initialization files will be executed in sorted name order as defined by the current locale, which defaults to en_US.utf8.
 
+## PHP Configuration
+
+As a lightweight alternative to a full PHP configuration file, you can specify a set of prefixed environment variables when starting your container with these variables turned into ini-format configuration.
+
+Any environment variable whose name is prefixed with `PHP_INI-` will have the prefix removed, and will be added to a new ini file before the main command starts.
+
+```
+docker run \
+    --name web0 \
+    -p 8080:80 \
+    -v $PWD/moodle:/var/www/html
+    -e PHP_INI-upload_max_filesize=200M \
+    -e PHP_INI-post_max_size=210M \
+    moodle-php-apache:latest
+```
+
 ## See also
 This container is part of a set of containers for Moodle development, see also:
 
