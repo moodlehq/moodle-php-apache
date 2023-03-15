@@ -27,6 +27,8 @@ jobs:
           docker run --name test0 -d -p 8000:80 \
               -v $PWD/tests/fixtures:/var/www/html \
               -v $PWD/tests/docker-entrypoint.d:/docker-entrypoint.d \
+              -e PHP_INI-memory_limit=256M \
+              -e PHP_INI-apc.enabled=0 \
               moodle-php-apache
           docker exec test0 php /var/www/html/test.php
           docker exec test0 php /var/www/html/check-ini.php
