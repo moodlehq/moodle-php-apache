@@ -2,11 +2,6 @@
   
 set -e
 
-if [[ ${TARGETPLATFORM} != "linux/amd64" ]]; then
-  echo "sqlsrv extension not available for ${TARGETPLATFORM} architecture, skipping"
-  exit 0
-fi
-
 # Packages for build.
 BUILD_PACKAGES="gnupg unixodbc-dev"
 
@@ -28,12 +23,12 @@ curl https://packages.microsoft.com/config/debian/10/prod.list -o /etc/apt/sourc
 apt-get update
 
 echo "Install msodbcsql"
-ACCEPT_EULA=Y apt-get install -y msodbcsql17
+ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
 ln -fsv /opt/mssql-tools/bin/* /usr/bin
 
 # Need 5.9.0preview1 (or later) for PHP 8.0 support
-pecl install sqlsrv-5.10.0
+pecl install sqlsrv-5.11.0
 docker-php-ext-enable sqlsrv
 
 # Keep our image size down..
