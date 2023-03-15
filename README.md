@@ -22,15 +22,40 @@ $ docker run --name web0 -p 8080:80  -v $PWD:/var/www/html moodlehq/moodle-php-a
 * For PHP 7.3 and up, both `linux/amd64` and `linux/arm64` images are being built. Note that `linux/arm64` doesn't support the sqlsrv and oci extensions yet. Other than that, both architectures work exactly the same.
 * Verified by [automated tests](https://travis-ci.com/moodlehq/moodle-php-apache).
 * Autobuilt from GHA, on push.
+* Support for entrypoint scripts and PHP Configuration
 
 ## Directories
-To faciliate testing and easy setup the following directories are created and owned by www-data by default:
+To facilitate testing and easy setup the following directories are created and owned by www-data by default:
 
 * `/var/www/moodledata`
 * `/var/www/phpunitdata`
 * `/var/www/behatdata`
 * `/var/www/behatfaildumps`
 
+## Initialisation scripts
+
+If you would like to do additional initialization, you can add one or more `*.sh`, or `*.ini`  scripts under `/docker-entrypoint.d` (creating the directory if necessary). When the entrypoint script is called, it will run any executable `*.sh` script, source any non-executable `*.sh` scripts found in that directory, and will copy any `*.ini` scripts into the PHP Configuration directory (`/usr/local/etc/php/conf.d`).
+
+For example, to configure PHP to support a higher `upload_max_filesize` option you might add the following to a `config/10-uploads.ini` file:
+
+```
+; Specify a max filesize of 200M for uploads.
+upload_max_filesize = 200M
+post_max_size = 210M
+```
+
+When starting your container you could do so passing in the config directory:
+
+```
+docker run \
+    --name web0 \
+    -p 8080:80 \
+    -v $PWD/moodle:/var/www/html
+    -v $PWD/config:/docker-entrypoint.d \
+    moodle-php-apache:latest
+```
+
+These initialization files will be executed in sorted name order as defined by the current locale, which defaults to en_US.utf8.
 
 ## See also
 This container is part of a set of containers for Moodle development, see also:
