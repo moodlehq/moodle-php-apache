@@ -24,9 +24,15 @@ jobs:
 
       - name: Run tests
         run: |
-          docker run --name test0 -d -p 8000:80 -v $PWD/tests/fixtures:/var/www/html moodle-php-apache
+          docker run --name test0 -d -p 8000:80 \
+              -v $PWD/tests/fixtures:/var/www/html \
+              -v $PWD/tests/docker-entrypoint.d:/docker-entrypoint.d \
+              moodle-php-apache
           docker exec test0 php /var/www/html/test.php
+          docker exec test0 php /var/www/html/check-ini.php
+          docker exec test0 php /var/www/html/check-entrypoint-scripts.php
           curl --fail http://127.0.0.1:8000/test.php
+          curl --fail http://127.0.0.1:8000/check-ini.php
 
       - name: Display container logs on failure
         if: failure()
