@@ -27,6 +27,10 @@ docker_process_init_files() {
   done
 }
 
+echo "Running PHP Configuration fetcher"
+/usr/local/bin/moodle-docker-php-ini
+echo
+
 echo "Running entrypoint files from /docker-entrypoint.d/*"
 docker_process_init_files /docker-entrypoint.d/*
 echo
