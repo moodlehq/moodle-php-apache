@@ -5,9 +5,9 @@ set -e
 echo "Installing apt dependencies"
 
 # Build packages will be added during the build, but will be removed at the end.
-BUILD_PACKAGES="gettext gnupg libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev \
+BUILD_PACKAGES="gettext libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev \
   libldap2-dev libmariadb-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev \
-  unixodbc-dev uuid-dev"
+  uuid-dev"
 
 # Packages for Postgres.
 PACKAGES_POSTGRES="libpq5"
@@ -17,7 +17,7 @@ PACKAGES_MYMARIA="libmariadb3"
 
 # Packages for other Moodle runtime dependenices.
 PACKAGES_RUNTIME="ghostscript libaio1 libcurl4 libgss3 libicu67 libmcrypt-dev libxml2 libxslt1.1 \
-  libzip-dev locales sassc unixodbc unzip zip"
+  libzip-dev locales sassc unzip zip"
 
 # Packages for Memcached.
 PACKAGES_MEMCACHED="libmemcached11 libmemcachedutil2"
@@ -73,15 +73,6 @@ echo "pcov.enabled=0" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
 echo "pcov.exclude='~\/(tests|coverage|vendor|node_modules)\/~'" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
 echo "pcov.directory=." >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
 echo "pcov.initial.files=1024" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
-
-# Install Microsoft dependencies for sqlsrv.
-# (kept apart for clarity, still need to be run here
-# before some build packages are deleted)
-if [[ ${TARGETPLATFORM} == "linux/amd64" ]]; then
-    /tmp/setup/sqlsrv-extension.sh
-else
-    echo "sqlsrv extension not available for ${TARGETPLATFORM} architecture, skipping"
-fi
 
 # Keep our image size down..
 pecl clear-cache
