@@ -2,6 +2,14 @@
 
 set -e
 
+# Debian buster (10) haven't got the arm64 packages, it seems, see:
+# - buster: https://packages.microsoft.com/debian/10/prod/pool/main/m/msodbcsql18/
+# So we won't build the extension for buster (10) images on arm64.
+if [[ ${TARGETPLATFORM} != "linux/amd64" ]]; then
+  echo "sqlsrv extension not available for ${TARGETPLATFORM} architecture, skipping"
+  exit 0
+fi
+
 # Packages for build.
 BUILD_PACKAGES="gnupg unixodbc-dev"
 
