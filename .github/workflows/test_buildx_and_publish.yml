@@ -1,4 +1,4 @@
-name: Test and publish
+name: Test, build and publish
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build image
         run: |
@@ -41,12 +41,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Calculate the tags to be pussed to the registries.
       - name: Calculate image tag names
         id: calculatetags
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: |
             ${{ env.DOCKERHUB_OWNER }}/${{ env.REPOSITORY }}
@@ -58,30 +58,30 @@ jobs:
 
       # https://github.com/docker/setup-qemu-action#usage
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       # https://github.com/marketplace/actions/docker-setup-buildx
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       # https://github.com/docker/login-action#docker-hub
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # https://github.com/docker/login-action#github-container-registry
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ secrets.GH_USERNAME }}
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # https://github.com/docker/build-push-action#multi-platform-image
-      - name: Build and push to Docker Hub and Github registries
-        uses: docker/build-push-action@v2
+      - name: Build and publish to Docker Hub and Github registries
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: Dockerfile
@@ -90,10 +90,6 @@ jobs:
           tags: ${{ steps.calculatetags.outputs.tags }}
 
       # https://github.com/peter-evans/dockerhub-description
-      # It's horrible that we need to use password here instead of PAT, because
-      # that's only available via CLI what defeats 2FA. Anyway, we need to
-      # auto-update the description, so using it (till available via PAT).
-      # Link: https://github.com/peter-evans/dockerhub-description/issues/10
       # Note that we only update the description with the master branch version.
       - name: Set Docker Hub description from README.md
         if: github.ref == 'refs/heads/master'
