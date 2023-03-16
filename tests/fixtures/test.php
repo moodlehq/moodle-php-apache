@@ -8,7 +8,6 @@ $requiredextensions = [
     'intl',
     'ldap',
     'memcached',
-    'mongodb',
     'mysqli',
     'oci8',
     'pgsql',
