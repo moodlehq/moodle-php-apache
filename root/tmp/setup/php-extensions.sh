@@ -63,6 +63,9 @@ docker-php-ext-enable apcu igbinary memcached pcov redis solr timezonedb uuid xm
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/10-docker-php-ext-apcu.ini
 
+# Install, but do not enable, xdebug and xhprof.
+pecl install xdebug xhprof
+
 echo "pcov.enabled=0" >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
 echo "pcov.exclude='~\/(tests|coverage|vendor|node_modules)\/~'" >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
 echo "pcov.directory=." >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
