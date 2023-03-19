@@ -67,12 +67,12 @@ docker-php-ext-enable memcached mongodb redis apcu igbinary solr uuid pcov
 docker-php-ext-configure zip --with-zip
 docker-php-ext-install zip
 
-echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
+echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/10-docker-php-ext-apcu.ini
 
-echo "pcov.enabled=0" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
-echo "pcov.exclude='~\/(tests|coverage|vendor|node_modules)\/~'" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
-echo "pcov.directory=." >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
-echo "pcov.initial.files=1024" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
+echo "pcov.enabled=0" >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
+echo "pcov.exclude='~\/(tests|coverage|vendor|node_modules)\/~'" >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
+echo "pcov.directory=." >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
+echo "pcov.initial.files=1024" >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
 
 # Keep our image size down..
 pecl clear-cache
