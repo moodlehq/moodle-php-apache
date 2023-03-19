@@ -34,10 +34,9 @@ apt-get install -y --no-install-recommends apt-transport-https \
     $PACKAGES_MEMCACHED \
     $PACKAGES_LDAP
 
-# Generate the locales configuration fo rboth Australia, and the US.
+# Generate the locales configuration for all possible UTF-8 locales.
 echo 'Generating locales..'
-echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
-echo 'en_AU.UTF-8 UTF-8' >> /etc/locale.gen
+grep UTF-8 /usr/share/i18n/SUPPORTED > /etc/locale.gen
 locale-gen
 
 echo "Installing php extensions"
