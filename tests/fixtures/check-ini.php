@@ -1,6 +1,5 @@
 <?php
 
-
 $allokay = true;
 $message = [];
 
@@ -45,6 +44,18 @@ $postmaxsize = ini_get('post_max_size');
 if ($postmaxsize !== '206M') {
     $allokay = false;
     $message[] = "Maximum post size not set to 206M: ({$postmaxsize})";
+}
+
+$xhprof = extension_loaded('xhprof');
+if (!$xhprof) {
+    $allokay = false;
+    $message[] = "xhprof extension not loaded (should be enabled)";
+}
+
+$xdebug = extension_loaded('xdebug');
+if ($xdebug) {
+    $allokay = false;
+    $message[] = "xdebug extension loaded (should be disabled)";
 }
 
 if (php_sapi_name() === 'cli') {
