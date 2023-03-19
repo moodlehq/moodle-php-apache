@@ -30,10 +30,16 @@ foreach($requiredextensions as $ext) {
     }
 }
 
-$locale = 'en_AU.UTF-8';
-if (setlocale(LC_TIME, $locale) === false) {
-    $missing[] = $locale;
+$locales = [
+    'en_AU.UTF-8',
+    'es_ES.UTF-8',
+];
+foreach ($locales as $locale) {
+    if (setlocale(LC_TIME, $locale) === false) {
+        $missing[] = $locale;
+    }
 }
+setlocale(LC_TIME, 'en_AU.UTF-8');
 
 if (php_sapi_name() === 'cli') {
     if (empty($missing)) {
