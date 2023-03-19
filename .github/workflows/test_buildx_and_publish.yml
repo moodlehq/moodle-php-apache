@@ -31,6 +31,7 @@ jobs:
               -e PHP_INI-apc.enabled=0 \
               -e PHP_INI-apc.enable_cli=0 \
               -e PHP_INI-pcov.enabled=1 \
+              -e PHP_INI-upload_max_filesize=20M \
               moodle-php-apache
           docker exec test0 php /var/www/html/test.php
           docker exec test0 php /var/www/html/check-ini.php
