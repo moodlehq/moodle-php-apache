@@ -26,4 +26,15 @@ $name = $value
 
 EOF
   fi
+
+  if [[ $fullname = PHP_EXTENSION_* ]]; then
+    extension=`echo $fullname | sed 's/^PHP_EXTENSION_//'`
+    echo "=> Found extension to enable: '${extension}'"
+    if [[ -f "/usr/local/etc/php/conf.d/docker-php-ext-${extension}.ini" ]]; then
+      echo "=> Extension already enabled: '${extension}'"
+    else
+      echo "=> Enabling extension '${extension}'"
+      docker-php-ext-enable ${extension}
+    fi
+  fi
 done
