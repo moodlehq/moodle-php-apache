@@ -25,6 +25,6 @@ rm /tmp/instantclient-sqlplus-linux.x64-21.6.0.0.0dbru.zip
 ln -s /usr/local/instantclient_21_6 /usr/local/instantclient
 ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
 
-echo 'instantclient,/usr/local/instantclient' | pecl install oci8
+echo 'instantclient,/usr/local/instantclient' | pecl install oci8-3.2.1
 docker-php-ext-enable oci8
 echo 'oci8.statement_cache_size = 0' >> /usr/local/etc/php/conf.d/docker-php-ext-oci8.ini
