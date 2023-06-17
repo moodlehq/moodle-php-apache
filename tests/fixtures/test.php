@@ -14,11 +14,10 @@ $requiredextensions = [
     'redis',
     'soap',
     'sodium',
-    'solr',
+    //'solr',  -- Missing as of 2023-06-17.
     'sqlsrv',
     'uuid',
     'xsl',
-    'xmlrpc',
     'zip',
 ];
 
