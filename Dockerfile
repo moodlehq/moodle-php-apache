@@ -10,8 +10,12 @@ RUN apt-get update && apt-get install -y \
     git \
 && rm -rf /var/lib/apt/lists/*
 
-# Setup the required extensions.
+# Generate all the UTF-8 locales.
 ARG DEBIAN_FRONTEND=noninteractive
+ADD root/tmp/setup/locales-gen.sh /tmp/setup/locales-gen.sh
+RUN /tmp/setup/locales-gen.sh
+
+# Setup the required extensions.
 ADD root/tmp/setup/php-extensions.sh /tmp/setup/php-extensions.sh
 RUN /tmp/setup/php-extensions.sh
 
