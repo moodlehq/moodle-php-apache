@@ -24,8 +24,12 @@ RUN apt-get update && apt-get install -y \
 # For an example of php80-rc5 near complete, using pickle instead of pear/pecl, look to:
 # https://github.com/stronk7/moodle-php-apache/tree/8.0-buster-pickle-version
 
-# Setup the required extensions.
+# Generate all the UTF-8 locales.
 ARG DEBIAN_FRONTEND=noninteractive
+ADD root/tmp/setup/locales-gen.sh /tmp/setup/locales-gen.sh
+RUN /tmp/setup/locales-gen.sh
+
+# Setup the required extensions.
 ADD root/tmp/setup/php-extensions.sh /tmp/setup/php-extensions.sh
 RUN /tmp/setup/php-extensions.sh
 
