@@ -17,7 +17,7 @@ PACKAGES_MYMARIA="libmariadb3"
 
 # Packages for other Moodle runtime dependenices.
 PACKAGES_RUNTIME="ghostscript libaio1 libcurl4 libgss3 libicu67 libmcrypt-dev libxml2 libxslt1.1 \
-  libzip-dev locales sassc unzip zip"
+  libzip-dev sassc unzip zip"
 
 # Packages for Memcached.
 PACKAGES_MEMCACHED="libmemcached11 libmemcachedutil2"
@@ -33,11 +33,6 @@ apt-get install -y --no-install-recommends apt-transport-https \
     $PACKAGES_RUNTIME \
     $PACKAGES_MEMCACHED \
     $PACKAGES_LDAP
-
-# Generate the locales configuration for all possible UTF-8 locales.
-echo 'Generating locales..'
-grep UTF-8 /usr/share/i18n/SUPPORTED > /etc/locale.gen
-locale-gen
 
 echo "Installing php extensions"
 docker-php-ext-install -j$(nproc) \
