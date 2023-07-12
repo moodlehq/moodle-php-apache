@@ -1,4 +1,4 @@
-FROM php:8.3.0alpha1-apache-bullseye
+FROM php:8.3.0alpha3-apache-bullseye
 
 # So we can use it anywhere for conditional stuff. Keeping BC with old (non-buildkit, builders)
 ARG TARGETPLATFORM
