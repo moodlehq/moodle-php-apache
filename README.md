@@ -40,6 +40,7 @@ $ docker run --name web0 -p 8080:80  -v $PWD:/var/www/html moodlehq/moodle-php-a
 * Verified by [automated tests](https://travis-ci.com/moodlehq/moodle-php-apache).
 * Autobuilt from GHA, on push.
 * Support for entrypoint scripts and PHP Configuration
+* Many common extensions available
 
 ## Directories
 To facilitate testing and easy setup the following directories are created and owned by www-data by default:
@@ -90,7 +91,71 @@ docker run \
     moodle-php-apache:latest
 ```
 
+## Extensions
+
+The following extensions are inluded as standard:
+
+* apcu
+* exif
+* gd
+* igbinary
+* intl
+* ldap
+* memcached
+* mysqli
+* oci8
+* opcache
+* pcov
+* pgsql
+* redis
+* soap
+* solr
+* sqlsrv
+* timezonedb
+* uuid
+* xdebug
+* xhprof
+* xsl
+* zip
+
+All of the above extensions are enabled by default, except for:
+
+* pcov
+* xdebug
+* xhprof
+
+### Enabling optional extensions
+
+Several extensions are installed, but not enabled. You can enable them easily.
+
+### xdebug
+
+The `xdebug` extension can be enabled by specifying the following environment variable when starting the container:
+
+```bash
+PHP_EXTENSION_xdebug=1
+```
+
+### xhprof
+
+The `xdebug` extension can be enabled by specifying the following environment variable when starting the container:
+
+```bash
+PHP_EXTENSION_xhprof=1
+```
+
+#### pcov
+
+The `pcov` extension is typically not used in the web UI, but is widely used for code coverage generation in unit testing.
+
+It can be enabled by specifying the following environment variable when starting the container:
+
+```bash
+PHP_INI-pcov.enabled=1
+```
+
 ## See also
+
 This container is part of a set of containers for Moodle development, see also:
 
 * [moodle-docker](https://github.com/moodlehq/moodle-docker) a docker-composer based set of tools to get Moodle development running with zero configuration
