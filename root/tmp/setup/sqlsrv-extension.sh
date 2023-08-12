@@ -24,7 +24,7 @@ apt-get install -y --no-install-recommends apt-transport-https \
 # Install Microsoft dependencies for sqlsrv
 echo "Downloading sqlsrv files"
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-# TODO, bullseye should be 11, but the msodbcsql17 package is not available yet, hence using buster (10) one.
+# TODO, bookworm should be 12, but the msodbcsql17 package is not available yet, hence using buster (10) one.
 curl https://packages.microsoft.com/config/debian/10/prod.list -o /etc/apt/sources.list.d/mssql-release.list
 apt-get update
 
