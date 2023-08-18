@@ -2,7 +2,8 @@
 
 A Moodle PHP environment configured for Moodle development based on [Official PHP Images](https://hub.docker.com/_/php/).
 
-### Version
+### Version <span style="color:darkred">(Not updated since 8.1.20, June 2023!)</span>
+
 
 | PHP Version  | Variant | Tags             | Status |
 |--------------|---------|------------------|--------|
