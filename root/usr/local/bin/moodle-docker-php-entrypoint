@@ -12,29 +12,26 @@ docker_process_init_files() {
         rm -f /tmp/testscript
         cp "$f" /tmp/testscript
         if [ -x "/tmp/testscript" ]; then
-          echo "$0: running $f"
+          echo "$0: running $f" >/dev/stderr
           "$f"
         else
-          echo "$0: sourcing $f"
+          echo "$0: sourcing $f" >/dev/stderr
           . "$f"
         fi
         ;;
       *.ini)
-        echo "$0: copying $f into /usr/local/etc/php/conf.d/"
+        echo "$0: copying $f into /usr/local/etc/php/conf.d/" >/dev/stderr
         cp "$f" /usr/local/etc/php/conf.d/
         ;;
     esac
   done
 }
 
-echo "Running PHP Configuration fetcher"
+echo "Running PHP Configuration fetcher" >/dev/stderr
 /usr/local/bin/moodle-docker-php-ini
-echo
 
-echo "Running entrypoint files from /docker-entrypoint.d/*"
+echo "Running entrypoint files from /docker-entrypoint.d/*" >/dev/stderr
 docker_process_init_files /docker-entrypoint.d/*
-echo
 
-echo "Starting docker-php-entrypoint with $@"
+echo "Starting docker-php-entrypoint with $@" >/dev/stderr
 source /usr/local/bin/docker-php-entrypoint
-echo
