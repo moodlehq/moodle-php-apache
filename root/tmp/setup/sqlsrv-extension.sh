@@ -26,16 +26,17 @@ echo "Downloading sqlsrv files"
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 # TODO, bookworm should be 12, but the msodbcsql17 package is not available yet, hence using bullseye (11) one.
 # (see https://learn.microsoft.com/en-us/answers/questions/1328834/debian-12-public-key-is-not-available)
-curl https://packages.microsoft.com/config/debian/11/prod.list -o /etc/apt/sources.list.d/mssql-release.list
+# Also, with 8.3-RC4, the bullseye (11) has stopped to build ok. So using 10 (buster) for now.
+curl https://packages.microsoft.com/config/debian/10/prod.list -o /etc/apt/sources.list.d/mssql-release.list
 apt-get update
 
 echo "Install msodbcsql"
-ACCEPT_EULA=Y apt-get install -y msodbcsql17
+ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
-ln -fsv /opt/mssql-tools/bin/* /usr/bin
+ln -fsv /opt/mssql-tools18/bin/* /usr/bin
 
 # Need 5.11 (or later) for PHP 8.2 support
-pecl install sqlsrv-5.11.0
+pecl install sqlsrv-5.11.1
 docker-php-ext-enable sqlsrv
 
 # Keep our image size down..
