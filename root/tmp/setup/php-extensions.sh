@@ -58,10 +58,14 @@ docker-php-ext-configure ldap
 docker-php-ext-install -j$(nproc) ldap
 
 # APCu, igbinary, Memcached, PCov, Redis, Solr, timezonedb, uuid, XMLRPC (beta)
-pecl install apcu igbinary memcached pcov redis solr timezonedb uuid xmlrpc-beta
-docker-php-ext-enable apcu igbinary memcached pcov redis solr timezonedb uuid xmlrpc
+pecl install apcu igbinary memcached pcov solr timezonedb uuid xmlrpc-beta
+docker-php-ext-enable apcu igbinary memcached pcov solr timezonedb uuid xmlrpc
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/10-docker-php-ext-apcu.ini
+
+# Install the redis extension enabling igbinary support.
+pecl install --configureoptions 'enable-redis-igbinary="yes"' redis
+docker-php-ext-enable redis
 
 # Install, but do not enable, xdebug and xhprof.
 pecl install xdebug xhprof
