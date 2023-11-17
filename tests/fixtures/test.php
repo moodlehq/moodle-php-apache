@@ -42,6 +42,10 @@ foreach ($locales as $locale) {
 }
 setlocale(LC_TIME, 'en_AU.UTF-8');
 
+if (!defined('\Redis::SERIALIZER_IGBINARY')) {
+    $missing[] = 'redis support for igbinary serializer';
+}
+
 if (php_sapi_name() === 'cli') {
     if (empty($missing)) {
         echo "OK\n";
