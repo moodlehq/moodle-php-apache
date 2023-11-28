@@ -6,7 +6,7 @@ A Moodle PHP environment configured for Moodle development based on [Official PH
 
 | PHP Version  | Variant | Tags             | Status |
 |--------------|---------|------------------|--------|
-| PHP 8.2      | Bullseye| 8.2, 8.2-bullseye| [![Test and publish 8.2](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.2-bullseye)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)|
+| PHP 8.2      | Bullseye| 8.2-bullseye| [![Test and publish 8.2](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.2-bullseye)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)|
 
 For a complete list of supported versions, look to the [master README](https://github.com/moodlehq/moodle-php-apache/tree/master).
 
