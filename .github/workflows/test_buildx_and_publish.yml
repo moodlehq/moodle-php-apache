@@ -70,7 +70,8 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=dev
+            type=raw,value={{branch}}
+            type=match,pattern=(\d+.\d+),value={{branch}}
 
       # https://github.com/docker/setup-qemu-action#usage
       - name: Set up QEMU
