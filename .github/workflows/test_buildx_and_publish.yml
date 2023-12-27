@@ -106,9 +106,9 @@ jobs:
           tags: ${{ steps.calculatetags.outputs.tags }}
 
       # https://github.com/peter-evans/dockerhub-description
-      # Note that we only update the description with the master branch version.
+      # Note that we only update the description with the main branch version.
       - name: Set Docker Hub description from README.md
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         uses: peter-evans/dockerhub-description@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
