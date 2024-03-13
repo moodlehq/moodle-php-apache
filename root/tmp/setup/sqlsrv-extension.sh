@@ -31,12 +31,14 @@ curl https://packages.microsoft.com/config/debian/10/prod.list -o /etc/apt/sourc
 apt-get update
 
 echo "Install msodbcsql"
-ACCEPT_EULA=Y apt-get install -y msodbcsql18
+# We have to stay with 17 because 18 encrypts the connections by default and that breaks ADOdb/2nd connection
+# tests. Only when https://tracker.moodle.org/browse/MDL-77678 is fixed, we can move to odbc18.
+ACCEPT_EULA=Y apt-get install -y msodbcsql17
 
-ln -fsv /opt/mssql-tools18/bin/* /usr/bin
+ln -fsv /opt/mssql-tools/bin/* /usr/bin
 
-# Need 5.11 (or later) for PHP 8.2 support
-pecl install sqlsrv-5.11.1
+# Need 5.12 (or later) for PHP 8.3 support
+pecl install sqlsrv-5.12.0
 docker-php-ext-enable sqlsrv
 
 # Keep our image size down..
