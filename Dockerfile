@@ -7,7 +7,7 @@ RUN echo "Building for ${TARGETPLATFORM}"
 
 # Install some packages that are useful within the images.
 RUN apt-get update && apt-get install -y \
-    git bc \
+    git bc default-mysql-client-core \
 && rm -rf /var/lib/apt/lists/*
 
 # Generate all the UTF-8 locales.
