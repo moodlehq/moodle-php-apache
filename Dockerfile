@@ -7,7 +7,7 @@ RUN echo "Building for ${TARGETPLATFORM}"
 
 # Install some packages that are useful within the images.
 RUN apt-get update && apt-get install -y \
-    git \
+    git bc \
 && rm -rf /var/lib/apt/lists/*
 
 # Install pickle as an easier alternative to PECL, that is not
@@ -45,7 +45,9 @@ RUN /tmp/setup/sqlsrv-extension.sh
 RUN mkdir /var/www/moodledata && chown www-data /var/www/moodledata && \
     mkdir /var/www/phpunitdata && chown www-data /var/www/phpunitdata && \
     mkdir /var/www/behatdata && chown www-data /var/www/behatdata && \
-    mkdir /var/www/behatfaildumps && chown www-data /var/www/behatfaildumps
+    mkdir /var/www/behatfaildumps && chown www-data /var/www/behatfaildumps && \
+    mkdir /var/www/.npm && chown www-data /var/www/.npm && \
+    mkdir /var/www/.nvm && chown www-data /var/www/.nvm
 
 ADD root/usr /usr
 
