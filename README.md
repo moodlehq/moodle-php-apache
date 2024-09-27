@@ -39,7 +39,7 @@ $ docker run --name web0 -p 8080:80  -v $PWD:/var/www/html moodlehq/moodle-php-a
 
 ## Features
 * Preconfigured with all php extensions required for Moodle development and all database drivers
-* Serves wwroot configured at /var/www/html/
+* Serves wwwroot configured at /var/www/html/
 * For PHP 7.3 and up, both `linux/amd64` and `linux/arm64` images are being built. Note that `linux/arm64` doesn't support the sqlsrv and oci extensions yet. Other than that, both architectures work exactly the same.
 * Verified by [automated tests](https://travis-ci.com/moodlehq/moodle-php-apache).
 * Autobuilt from GHA, on push.
