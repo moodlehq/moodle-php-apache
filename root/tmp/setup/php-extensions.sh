@@ -58,7 +58,7 @@ docker-php-ext-configure ldap
 docker-php-ext-install -j$(nproc) ldap
 
 # APCu, igbinary, Memcached, MongoDB, PCov, Redis, Solr, timezonedb, uuid, XMLRPC (beta)
-pecl install apcu igbinary memcached mongodb pcov redis solr timezonedb uuid xmlrpc-beta
+pecl install apcu igbinary memcached mongodb-1.19.4 pcov redis solr timezonedb uuid xmlrpc-beta
 docker-php-ext-enable apcu igbinary memcached mongodb pcov redis solr timezonedb uuid xmlrpc
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/10-docker-php-ext-apcu.ini
