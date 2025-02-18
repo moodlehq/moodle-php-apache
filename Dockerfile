@@ -48,6 +48,7 @@ RUN mkdir /var/www/moodledata && chown www-data /var/www/moodledata && \
     mkdir /var/www/behatfaildumps && chown www-data /var/www/behatfaildumps
 
 ADD root/usr /usr
+ADD root/etc /etc
 
 # Fix the original permissions of /tmp, the PHP default upload tmp dir.
 RUN chmod 777 /tmp && chmod +t /tmp
