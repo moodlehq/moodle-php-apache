@@ -24,10 +24,7 @@ apt-get install -y --no-install-recommends apt-transport-https \
 # Install Microsoft dependencies for sqlsrv
 echo "Downloading sqlsrv files"
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-# TODO, bookworm should be 12, but the msodbcsql17 package is not available yet, hence using bullseye (11) one.
-# (see https://learn.microsoft.com/en-us/answers/questions/1328834/debian-12-public-key-is-not-available)
-# Also, with 8.3-RC4, the bullseye (11) has stopped to build ok. So using 10 (buster) for now.
-curl https://packages.microsoft.com/config/debian/10/prod.list -o /etc/apt/sources.list.d/mssql-release.list
+curl https://packages.microsoft.com/config/debian/12/prod.list -o /etc/apt/sources.list.d/mssql-release.list
 apt-get update
 
 echo "Install msodbcsql"
