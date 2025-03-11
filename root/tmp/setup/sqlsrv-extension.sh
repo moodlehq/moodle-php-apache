@@ -23,8 +23,9 @@ apt-get install -y --no-install-recommends apt-transport-https \
 
 # Install Microsoft dependencies for sqlsrv
 echo "Downloading sqlsrv files"
-curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-curl https://packages.microsoft.com/config/debian/12/prod.list -o /etc/apt/sources.list.d/mssql-release.list
+curl -sSL -O https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb
+dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb
 apt-get update
 
 echo "Install msodbcsql"
