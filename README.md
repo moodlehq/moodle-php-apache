@@ -24,6 +24,7 @@ $ docker run --name web0 -p 8080:80  -v $PWD:/var/www/html moodlehq/moodle-php-a
 * Autobuilt from GHA, on push.
 * Support for entrypoint scripts and PHP Configuration
 * Many common extensions available
+* Note that PHP 8.4 images do not include oci extensions as these are no longer supported by Moodle 5.0 onwards.
 
 ## Directories
 To facilitate testing and easy setup the following directories are created and owned by www-data by default:
