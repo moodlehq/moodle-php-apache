@@ -9,7 +9,6 @@ $requiredextensions = [
     'ldap',
     'memcached',
     'mysqli',
-    'oci8',
     'pgsql',
     'redis',
     'soap',
