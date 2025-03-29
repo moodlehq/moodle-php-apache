@@ -39,6 +39,14 @@ jobs:
           docker exec test0 php /var/www/html/check-entrypoint-scripts.php
           curl --fail http://127.0.0.1:8000/test.php
           curl --fail http://127.0.0.1:8000/check-ini.php
+          # Verify that CLI execution only includes the expected output (if we discard stderr).
+          stdout=$(docker run --rm -v $PWD/tests/fixtures:/var/www/html \
+              moodle-php-apache php /var/www/html/check-stderr.php 2>/dev/null)
+          [[ ${stdout} == "Hello World!" ]] && echo "OK" || echo "Fail"
+          # Verify that stderr still contains information about the bootstrap.
+          stdout=$(docker run --rm -v $PWD/tests/fixtures:/var/www/html \
+              moodle-php-apache php /var/www/html/check-stderr.php 2>&1)
+          [[ ${stdout} =~ "Checking for php configuration" ]] && echo "OK" || echo "Fail"
 
       - name: Display container logs on failure
         if: failure()
