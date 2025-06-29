@@ -25,7 +25,7 @@ jobs:
       - name: Run tests
         run: |
           docker run --name test0 -d -p 8000:80 \
-              -v $PWD/tests/fixtures:/var/www/html \
+              -v $PWD/tests/fixtures/entrypoint:/var/www/html \
               -v $PWD/tests/docker-entrypoint.d:/docker-entrypoint.d \
               -e PHP_INI-memory_limit=256M \
               -e PHP_INI-apc.enabled=0 \
@@ -40,14 +40,45 @@ jobs:
           curl --fail http://127.0.0.1:8000/test.php
           curl --fail http://127.0.0.1:8000/check-ini.php
 
+          # Test the default DocumentRoot when it contains a public directory.
+          docker run --name test1 -d -p 8002:80 \
+              -v $PWD/tests/fixtures/documentroot:/var/www/html \
+              moodle-php-apache
+          sleep 1 # Wait for the server to start
+          # Test the DocumentRoot when it contains a public directory.
+          curl --fail http://127.0.0.1:8002/test.php
+
+          # Test the DocumentRoot when it does not contain a public directory.
+          docker run --name test2 -d -p 8003:80 \
+              -v $PWD/tests/fixtures/documentroot/public:/var/www/html \
+              moodle-php-apache
+          sleep 1 # Wait for the server to start
+          curl --fail http://127.0.0.1:8003/test.php
+
+          # Test the DocumentRoot when it is has been overridden and contains a public directory.
+          docker run --name test3 -d -p 8004:80 \
+              -v $PWD/tests/fixtures/documentroot:/srv/moodle \
+              -e APACHE_DOCUMENT_ROOT=/srv/moodle \
+              moodle-php-apache
+          sleep 1 # Wait for the server to start
+          curl --fail http://127.0.0.1:8004/notpublic.php
+
+          # Test the DocumentRoot is not guessed when it has been overriden and does not contain a public directory.
+          docker run --name test4 -d -p 8005:80 \
+              -v $PWD/tests/fixtures/documentroot/public:/srv/moodle \
+              -e APACHE_DOCUMENT_ROOT=/srv/moodle \
+              moodle-php-apache
+          sleep 1 # Wait for the server to start
+          curl --fail http://127.0.0.1:8005/test.php
+
       - name: Display container logs on failure
         if: failure()
         run: |
           docker logs test0
-
-      - name: Cleanup docker images
-        run: |
-          docker rm -f test0
+          docker logs test1
+          docker logs test2
+          docker logs test3
+          docker logs test4
 
   Publish:
     # Completely avoid forks and pull requests to try this job.

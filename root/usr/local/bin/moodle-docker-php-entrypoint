@@ -19,6 +19,11 @@ docker_process_init_files() {
           . "$f"
         fi
         ;;
+      *.conf)
+        echo "$0: copying $f into /etc/apache2/conf-enabled/"
+        cp "$f" /etc/apache2/conf-enabled/
+        a2enconf "$(basename "$f")"
+        ;;
       *.ini)
         echo "$0: copying $f into /usr/local/etc/php/conf.d/"
         cp "$f" /usr/local/etc/php/conf.d/
@@ -31,8 +36,16 @@ echo "Running PHP Configuration fetcher"
 /usr/local/bin/moodle-docker-php-ini
 echo
 
-echo "Running entrypoint files from /docker-entrypoint.d/*"
-docker_process_init_files /docker-entrypoint.d/*
+mkdir -p /system-docker-entrypoint.d  /docker-entrypoint.d /final-docker-entrypoint.d
+echo "Building Entrypoint files from /system-docker-entrypoint.d/* and /docker-entrypoint.d/*"
+
+echo "Copying /system-docker-entrypoint.d/* to /final-docker-entrypoint.d/"
+cp -rf /system-docker-entrypoint.d/* /final-docker-entrypoint.d/ || true
+echo "Copying /docker-entrypoint.d/* to /final-docker-entrypoint.d/"
+cp -rf /docker-entrypoint.d/* /final-docker-entrypoint.d/ || true
+
+echo "Running entrypoint files from /final-docker-entrypoint.d/*"
+docker_process_init_files /final-docker-entrypoint.d/*
 echo
 
 echo "Starting docker-php-entrypoint with $@"

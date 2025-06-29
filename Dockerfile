@@ -46,9 +46,19 @@ RUN mkdir /var/www/moodledata && chown www-data /var/www/moodledata && \
 
 ADD root/usr /usr
 ADD root/etc /etc
+ADD root/system-docker-entrypoint.d/wwwroot.sh /system-docker-entrypoint.d/10-wwwroot.sh
 
 # Fix the original permissions of /tmp, the PHP default upload tmp dir.
 RUN chmod 777 /tmp && chmod +t /tmp
+
+# Allow configuration of the Apache DocumentRoot via environment variable.
+# Note: Do not specify a default value here, as it will be set in the
+#       `wwwroot.sh` script, which will be run before the Apache server starts.
+#       This allows the user to override the default value by setting the
+#       `APACHE_DOCUMENT_ROOT` environment variable when running the container.
+
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 CMD ["apache2-foreground"]
 ENTRYPOINT ["moodle-docker-php-entrypoint"]
