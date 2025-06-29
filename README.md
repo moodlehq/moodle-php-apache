@@ -11,21 +11,61 @@ A Moodle PHP environment configured for Moodle development based on [Official PH
 For a complete list of supported versions, look to the [master README](https://github.com/moodlehq/moodle-php-apache/tree/master).
 
 ## Example usage
+
 The following command will expose the current working directory on port 8080:
 ```bash
 $ docker run --name web0 -p 8080:80  -v $PWD:/var/www/html moodlehq/moodle-php-apache:7.1
 ```
 
 ## Features
+
 * Preconfigured with all php extensions required for Moodle development and all database drivers
-* Serves wwroot configured at /var/www/html/
+* Serves content from `/var/www/html` or `/var/www/html/public` (for Moodle 5.1 onwards) by default.
+* Document root can be overridden
 * For PHP 7.3 and up, both `linux/amd64` and `linux/arm64` images are being built. Note that `linux/arm64` doesn't support the sqlsrv and oci extensions yet. Other than that, both architectures work exactly the same.
 * Verified by [automated tests](https://travis-ci.com/moodlehq/moodle-php-apache).
 * Autobuilt from GHA, on push.
 * Support for entrypoint scripts and PHP Configuration
 * Many common extensions available
 
+## Configuration
+
+### Apache Configuration
+
+This image makes use of the Apache HTTPD server to serve all content. It requires minimal manual configuration.
+
+The Apache `DocumentRoot` directive can be configured using the `APACHE_DOCUMENT_ROOT` environment variable, for example:
+
+```bash
+docker run \
+    --name web0 \
+    -p 8080:80 \
+    -v $PWD/moodle:/srv/moodle
+    -e APACHE_DOCUMENT_ROOT=/srv/moodle \
+    moodle-php-apache:latest
+```
+
+Note: Specifying a `DocumentRoot` will override the default root, and will prevent the ability for the image to automatically configure any Moodle-specific configuration.
+
+### PHP Configuration
+
+As a lightweight alternative to a full PHP configuration file, you can specify a set of prefixed environment variables when starting your container with these variables turned into ini-format configuration.
+
+Any environment variable whose name is prefixed with `PHP_INI-` will have the prefix removed, and will be added to a new ini file before the main command starts.
+
+```bash
+docker run \
+    --name web0 \
+    -p 8080:80 \
+    -v $PWD/moodle:/var/www/html
+    -e PHP_INI-upload_max_filesize=200M \
+    -e PHP_INI-post_max_size=210M \
+    moodle-php-apache:latest
+```
+
+
 ## Directories
+
 To facilitate testing and easy setup the following directories are created and owned by www-data by default:
 
 * `/var/www/moodledata`
@@ -35,9 +75,19 @@ To facilitate testing and easy setup the following directories are created and o
 
 ## Initialisation scripts
 
-If you would like to do additional initialization, you can add one or more `*.sh`, or `*.ini`  scripts under `/docker-entrypoint.d` (creating the directory if necessary). When the entrypoint script is called, it will run any executable `*.sh` script, source any non-executable `*.sh` scripts found in that directory, and will copy any `*.ini` scripts into the PHP Configuration directory (`/usr/local/etc/php/conf.d`).
+This image supports custom initialisation scripts using the the `docker-entrypoint.d` directory. These may be in the following formats:
 
-For example, to configure PHP to support a higher `upload_max_filesize` option you might add the following to a `config/10-uploads.ini` file:
+* a non-executable `.sh` script, which will be _sourced_ and alter the current context;
+* an executable `.sh` script, which will be _executed_ in the current context;
+* a `.ini` file. which will be copied into the PHP Configuration directory (`/usr/local/etc/php/conf.d`.)
+
+The following scripts are included as standard:
+
+* `10-wwwroot.sh` - a non-executable script used to guess the `APACHE_DOCUMENT_ROOT` if one is not provided.
+
+These scripts cannot be removed, but may be disabled by creating a file with a matching file name in your own `docker-entrypoint.d` location.
+
+Other scripts may also be provided, for example, to configure PHP to support a higher `upload_max_filesize` option you might add the following to a `config/10-uploads.ini` file:
 
 ```
 ; Specify a max filesize of 200M for uploads.
@@ -57,22 +107,6 @@ docker run \
 ```
 
 These initialization files will be executed in sorted name order as defined by the current locale, which defaults to en_US.utf8.
-
-## PHP Configuration
-
-As a lightweight alternative to a full PHP configuration file, you can specify a set of prefixed environment variables when starting your container with these variables turned into ini-format configuration.
-
-Any environment variable whose name is prefixed with `PHP_INI-` will have the prefix removed, and will be added to a new ini file before the main command starts.
-
-```
-docker run \
-    --name web0 \
-    -p 8080:80 \
-    -v $PWD/moodle:/var/www/html
-    -e PHP_INI-upload_max_filesize=200M \
-    -e PHP_INI-post_max_size=210M \
-    moodle-php-apache:latest
-```
 
 ## Extensions
 
