@@ -75,6 +75,10 @@ echo "pcov.exclude='~\/(tests|coverage|vendor|node_modules)\/~'" >> /usr/local/e
 echo "pcov.directory=." >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
 echo "pcov.initial.files=1024" >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
 
+#Excimer for monitoring
+pecl install excimer
+docker-php-ext-enable excimer
+
 # Keep our image size down..
 pecl clear-cache
 apt-get remove --purge -y $BUILD_PACKAGES
