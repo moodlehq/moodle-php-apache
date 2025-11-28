@@ -81,7 +81,7 @@ Any environment variable whose name is prefixed with `PHP_INI-` will have the pr
 docker run \
     --name web0 \
     -p 8080:80 \
-    -v $PWD/moodle:/var/www/html
+    -v $PWD/moodle:/var/www/html \
     -e PHP_INI-upload_max_filesize=200M \
     -e PHP_INI-post_max_size=210M \
     moodle-php-apache:latest
@@ -125,7 +125,7 @@ When starting your container you could do so passing in the config directory:
 docker run \
     --name web0 \
     -p 8080:80 \
-    -v $PWD/moodle:/var/www/html
+    -v $PWD/moodle:/var/www/html \
     -v $PWD/config:/docker-entrypoint.d \
     moodle-php-apache:latest
 ```
