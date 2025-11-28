@@ -48,6 +48,11 @@ ADD root/usr /usr
 ADD root/etc /etc
 ADD root/system-docker-entrypoint.d/wwwroot.sh /system-docker-entrypoint.d/10-wwwroot.sh
 
+# Add configuration for SSL.
+ADD root/system-docker-entrypoint.d/ssl.sh /system-docker-entrypoint.d/20-ssl.sh
+ADD root/etc/apache2/conf-enabled/certificate.conf /etc/apache2/conf-enabled/certificate.conf
+EXPOSE 443
+
 # Fix the original permissions of /tmp, the PHP default upload tmp dir.
 RUN chmod 777 /tmp && chmod +t /tmp
 
