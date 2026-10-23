@@ -37,6 +37,7 @@ jobs:
           docker exec test0 php /var/www/html/test.php
           docker exec test0 php /var/www/html/check-ini.php
           docker exec test0 php /var/www/html/check-entrypoint-scripts.php
+          docker exec test0 php /var/www/html/check-php-patches.php
           curl --fail http://127.0.0.1:8000/test.php
           curl --fail http://127.0.0.1:8000/check-ini.php
 
