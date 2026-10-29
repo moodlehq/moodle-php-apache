@@ -44,7 +44,6 @@ docker-php-ext-install -j$(nproc) \
     exif \
     intl \
     mysqli \
-    opcache \
     pgsql \
     soap \
     xsl
