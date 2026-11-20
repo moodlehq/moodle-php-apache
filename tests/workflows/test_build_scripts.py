@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import textwrap
 import unittest
 
 
@@ -45,11 +46,13 @@ class BuildScriptsTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(
             [image["id"] for image in json.loads(result.stdout)],
-            ["dev", "8.1-bookworm", "8.2-bookworm", "8.6-bookworm"],
+            ["main", "8.1-bookworm", "8.2-bookworm", "8.6-bookworm"],
         )
-        result = self.run_script("build-matrix.sh", "8.6-bookworm, dev")
+        self.assertEqual(json.loads(result.stdout)[0]["context"], ".")
+        result = self.run_script("build-matrix.sh", "8.6-bookworm, main")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual([image["id"] for image in json.loads(result.stdout)], ["dev", "8.6-bookworm"])
+        self.assertEqual([image["id"] for image in json.loads(result.stdout)], ["main", "8.6-bookworm"])
+        self.assertNotEqual(self.run_script("build-matrix.sh", "dev").returncode, 0)
         self.assertNotEqual(self.run_script("build-matrix.sh", "missing").returncode, 0)
 
     def test_duplicate_short_tags_are_rejected(self):
@@ -58,11 +61,37 @@ class BuildScriptsTest(unittest.TestCase):
         (directory / "Dockerfile").touch()
         self.assertNotEqual(self.run_script("build-matrix.sh").returncode, 0)
 
+    def test_published_tags_for_main_and_version(self):
+        workflow = (ROOT / ".github" / "workflows" / "test_buildx_and_publish.yml").read_text()
+        step = workflow.split("      - name: Calculate image tags\n", 1)[1]
+        script = textwrap.dedent(step.split("        run: |\n", 1)[1].split("\n      - uses:", 1)[0])
+        self.env.update({
+            "DOCKERHUB_OWNER": "moodlehq",
+            "GH_OWNER": "moodlehq",
+            "REPOSITORY": "moodle-php-apache",
+            "GITHUB_OUTPUT": str(self.root / "output"),
+        })
+        for version, tags in (
+            ("main", ["main"]),
+            ("8.6-bookworm", ["8.6-bookworm", "8.6"]),
+        ):
+            self.env["VERSION"] = version
+            Path(self.env["GITHUB_OUTPUT"]).write_text("")
+            result = subprocess.run(["bash", "-c", script], env=self.env, text=True, capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            output = Path(self.env["GITHUB_OUTPUT"]).read_text().splitlines()
+            self.assertEqual(output, [
+                "tags<<EOF",
+                *[f"moodlehq/moodle-php-apache:{tag}" for tag in tags],
+                *[f"ghcr.io/moodlehq/moodle-php-apache:{tag}" for tag in tags],
+                "EOF",
+            ])
+
     def test_rebuild_selection_and_errors(self):
         self.command(
             "docker",
             """case "$3" in
-    *:dev) echo "8.6.0-dev 2026.1" ;;
+    *:main) echo "8.6.0-dev 2026.1" ;;
     *:8.1-bookworm) echo "8.1.9 2026.2" ;;
     *:8.2-bookworm) echo "8.2.10 2026.1" ;;
     *:8.6-bookworm) echo "8.6.0-dev 2026.2" ;;
@@ -88,11 +117,11 @@ esac
         )
         result = self.run_script("check-rebuilds.sh")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout.strip(), "dev,8.1-bookworm,8.2-bookworm")
+        self.assertEqual(result.stdout.strip(), "main,8.1-bookworm,8.2-bookworm")
         self.env["MISSING_TAG"] = "8.6-bookworm"
         result = self.run_script("check-rebuilds.sh")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout.strip(), "dev,8.1-bookworm,8.2-bookworm,8.6-bookworm")
+        self.assertEqual(result.stdout.strip(), "main,8.1-bookworm,8.2-bookworm,8.6-bookworm")
         self.env["REGISTRY_FAILURE"] = "1"
         self.assertNotEqual(self.run_script("check-rebuilds.sh").returncode, 0)
         del self.env["REGISTRY_FAILURE"]

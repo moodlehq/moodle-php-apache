@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       versions:
-        description: Comma-separated version directories or dev (empty builds all)
+        description: Comma-separated version directories or main (empty builds all)
         type: string
   workflow_call:
     inputs:
       versions:
-        description: Comma-separated version directories or dev (empty builds all)
+        description: Comma-separated version directories or main (empty builds all)
         type: string
 
 env:
@@ -82,7 +82,7 @@ jobs:
             echo 'tags<<EOF'
             for image in "$DOCKERHUB_OWNER/$REPOSITORY" "ghcr.io/$GH_OWNER/$REPOSITORY"; do
               echo "$image:$VERSION"
-              if [[ "$VERSION" != dev ]]; then
+              if [[ "$VERSION" != main ]]; then
                 echo "$image:${VERSION%%-*}"
               fi
             done

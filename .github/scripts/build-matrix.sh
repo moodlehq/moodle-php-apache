@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-versions=(dev)
+versions=(main)
 for dockerfile in versions/*/Dockerfile; do
     [[ -f "$dockerfile" ]] || continue
     version=${dockerfile#versions/}
@@ -15,9 +15,9 @@ done
 
 jq -cn --args '[$ARGS.positional[] | {
     id: .,
-    context: (if . == "dev" then "." else "versions/" + . end)
+    context: (if . == "main" then "." else "versions/" + . end)
 }]' "${versions[@]}" | jq -ce --arg requested "${1:-}" '
-    if ([.[] | select(.id != "dev") | .id | split("-")[0]] | group_by(.) | any(length > 1)) then
+    if ([.[] | select(.id != "main") | .id | split("-")[0]] | group_by(.) | any(length > 1)) then
         error("Multiple variants would publish the same PHP version tag")
     elif $requested == "" then .
     else
