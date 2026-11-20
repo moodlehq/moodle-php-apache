@@ -14,11 +14,14 @@ $requiredextensions = [
     'soap',
     'sodium',
     'solr',
-    'sqlsrv',
     'uuid',
     'xsl',
     'zip',
 ];
+
+if (php_uname('m') === 'x86_64') {
+    $requiredextensions[] = 'sqlsrv';
+}
 
 $buffer = '';;
 $missing = [];

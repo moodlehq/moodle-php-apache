@@ -8,7 +8,7 @@ if [[ ${TARGETPLATFORM} != "linux/amd64" ]]; then
 fi
 
 # Packages for build.
-BUILD_PACKAGES="gnupg unixodbc-dev"
+BUILD_PACKAGES="gnupg libtool unixodbc-dev"
 
 # Packages for sqlsrv runtime.
 PACKAGES_SQLSRV="unixodbc"
@@ -37,12 +37,20 @@ ACCEPT_EULA=Y apt-get install -y msodbcsql17
 
 ln -fsv /opt/mssql-tools/bin/* /usr/bin
 
-# Need 5.12 (or later) for PHP 8.3 support
-pecl install sqlsrv-5.12.0
-docker-php-ext-enable sqlsrv
+# Use Microsoft's release archive to avoid PIE's GitHub API rate limit.
+export HOME=/tmp/pie-build
+mkdir -p "$HOME" /tmp/pie-sqlsrv
+curl -fsSL https://github.com/microsoft/msphpsql_sqlsrv/releases/download/v5.14.0/sqlsrv-v5.14.0.tgz \
+    | tar -xz -C /tmp/pie-sqlsrv
+cat > /tmp/pie-sqlsrv/composer.json <<'EOF'
+{"name":"microsoft/sqlsrv","version":"5.14.0","type":"php-ext","php-ext":{"extension-name":"sqlsrv"}}
+EOF
+pie repository:add path /tmp/pie-sqlsrv
+pie install --no-interaction --no-cache 'microsoft/sqlsrv:5.14.0'
+rm -rf /tmp/pie-sqlsrv
+rm -rf /tmp/pie-build
 
 # Keep our image size down..
-pecl clear-cache
 apt-get remove --purge -y $BUILD_PACKAGES
 apt-get autoremove -y
 apt-get clean
