@@ -4,144 +4,116 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      versions:
+        description: Comma-separated version directories or dev (empty builds all)
+        type: string
   workflow_call:
+    inputs:
+      versions:
+        description: Comma-separated version directories or dev (empty builds all)
+        type: string
 
 env:
   REPOSITORY: moodle-php-apache
   DOCKERHUB_OWNER: moodlehq
   GH_OWNER: moodlehq
 
+permissions:
+  contents: read
+
 jobs:
-  Test:
+  Discover:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.versions.outputs.matrix }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Test build selection
+        run: python3 tests/workflows/test_build_scripts.py
+      - name: Discover build contexts
+        id: versions
+        env:
+          VERSIONS: ${{ inputs.versions }}
+        run: echo "matrix=$(bash .github/scripts/build-matrix.sh "$VERSIONS")" >> "$GITHUB_OUTPUT"
 
+  Test:
+    needs: Discover
+    name: Test ${{ matrix.image.id }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.Discover.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
       - name: Build image
-        run: |
-          docker build . -t moodle-php-apache
-
+        env:
+          CONTEXT: ${{ matrix.image.context }}
+        run: docker build "$CONTEXT" -t moodle-php-apache:test
       - name: Run tests
-        run: |
-          docker run --name test0 -d -p 8000:80 \
-              -v $PWD/tests/fixtures/entrypoint:/var/www/html \
-              -v $PWD/tests/docker-entrypoint.d:/docker-entrypoint.d \
-              -e PHP_INI-memory_limit=256M \
-              -e PHP_INI-apc.enabled=0 \
-              -e PHP_INI-apc.enable_cli=0 \
-              -e PHP_INI-pcov.enabled=1 \
-              -e PHP_INI-upload_max_filesize=20M \
-              -e PHP_EXTENSION_xhprof=1 \
-              moodle-php-apache
-          docker exec test0 php /var/www/html/test.php
-          docker exec test0 php /var/www/html/check-ini.php
-          docker exec test0 php /var/www/html/check-entrypoint-scripts.php
-          curl --fail http://127.0.0.1:8000/test.php
-          curl --fail http://127.0.0.1:8000/check-ini.php
-
-          # Test the default DocumentRoot when it contains a public directory.
-          docker run --name test1 -d -p 8002:80 \
-              -v $PWD/tests/fixtures/documentroot:/var/www/html \
-              moodle-php-apache
-          sleep 1 # Wait for the server to start
-          # Test the DocumentRoot when it contains a public directory.
-          curl --fail http://127.0.0.1:8002/test.php
-
-          # Test the DocumentRoot when it does not contain a public directory.
-          docker run --name test2 -d -p 8003:80 \
-              -v $PWD/tests/fixtures/documentroot/public:/var/www/html \
-              moodle-php-apache
-          sleep 1 # Wait for the server to start
-          curl --fail http://127.0.0.1:8003/test.php
-
-          # Test the DocumentRoot when it is has been overridden and contains a public directory.
-          docker run --name test3 -d -p 8004:80 \
-              -v $PWD/tests/fixtures/documentroot:/srv/moodle \
-              -e APACHE_DOCUMENT_ROOT=/srv/moodle \
-              moodle-php-apache
-          sleep 1 # Wait for the server to start
-          curl --fail http://127.0.0.1:8004/notpublic.php
-
-          # Test the DocumentRoot is not guessed when it has been overriden and does not contain a public directory.
-          docker run --name test4 -d -p 8005:80 \
-              -v $PWD/tests/fixtures/documentroot/public:/srv/moodle \
-              -e APACHE_DOCUMENT_ROOT=/srv/moodle \
-              moodle-php-apache
-          sleep 1 # Wait for the server to start
-          curl --fail http://127.0.0.1:8005/test.php
-
-      - name: Display container logs on failure
-        if: failure()
-        run: |
-          docker logs test0
-          docker logs test1
-          docker logs test2
-          docker logs test3
-          docker logs test4
+        env:
+          CONTEXT: ${{ matrix.image.context }}
+        run: bash .github/scripts/test-image.sh "$CONTEXT" moodle-php-apache:test
 
   Publish:
-    # Completely avoid forks and pull requests to try this job.
     if: github.repository_owner == 'moodlehq' && github.ref == 'refs/heads/main' && contains(fromJson('["push", "workflow_dispatch", "workflow_call"]'), github.event_name)
-    # Requires Test to pass
-    needs: Test
+    needs: [Discover, Test]
+    name: Publish ${{ matrix.image.id }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.Discover.outputs.matrix) }}
+    concurrency:
+      group: publish-${{ matrix.image.id }}
+      cancel-in-progress: false
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      # Calculate the tags to be pussed to the registries.
-      - name: Calculate image tag names
-        id: calculatetags
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ${{ env.DOCKERHUB_OWNER }}/${{ env.REPOSITORY }}
-            ghcr.io/${{ env.GH_OWNER }}/${{ env.REPOSITORY }}
-          flavor: |
-            latest=false
-          tags: |
-            type=raw,value={{branch}}
-            type=match,pattern=(\d+.\d+),value={{branch}}
-
-      # https://github.com/docker/setup-qemu-action#usage
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      # https://github.com/marketplace/actions/docker-setup-buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # https://github.com/docker/login-action#docker-hub
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - uses: actions/checkout@v4
+      - name: Calculate image tags
+        id: tags
+        env:
+          VERSION: ${{ matrix.image.id }}
+        run: |
+          {
+            echo 'tags<<EOF'
+            for image in "$DOCKERHUB_OWNER/$REPOSITORY" "ghcr.io/$GH_OWNER/$REPOSITORY"; do
+              echo "$image:$VERSION"
+              if [[ "$VERSION" != dev ]]; then
+                echo "$image:${VERSION%%-*}"
+              fi
+            done
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # https://github.com/docker/login-action#github-container-registry
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      # https://github.com/docker/build-push-action#multi-platform-image
-      - name: Build and publish to Docker Hub and Github registries
-        uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v5
         with:
-          context: .
-          file: Dockerfile
+          context: ${{ matrix.image.context }}
+          file: ${{ matrix.image.context }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.calculatetags.outputs.tags }}
+          tags: ${{ steps.tags.outputs.tags }}
 
-      # https://github.com/peter-evans/dockerhub-description
-      # Note that we only update the description with the main branch version.
-      - name: Set Docker Hub description from README.md
-        if: github.ref == 'refs/heads/main'
-        uses: peter-evans/dockerhub-description@v4
+  DockerHubDescription:
+    if: github.repository_owner == 'moodlehq' && github.ref == 'refs/heads/main' && contains(fromJson('["push", "workflow_dispatch", "workflow_call"]'), github.event_name)
+    needs: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: peter-evans/dockerhub-description@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}

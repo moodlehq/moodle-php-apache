@@ -4,14 +4,16 @@ A Moodle PHP environment configured for Moodle development based on [Official PH
 
 ### Versions
 
-| PHP Version  | Variant | Tags             | Status | Notes |
-|--------------|---------|------------------|--------|-------|
-| PHP 8.6      | Bookworm| 8.6, 8.6-bookworm| [![Test and publish 8.6](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.6-bookworm)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)||
-| PHP 8.5      | Bookworm| 8.5, 8.5-bookworm| [![Test and publish 8.5](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.5-bookworm)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)||
-| PHP 8.4      | Bookworm | 8.4, 8.4-bookworm| [![Test and publish 8.4](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.4-bookworm)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)|
-| PHP 8.3      | Bookworm | 8.3, 8.3-bookworm| [![Test and publish 8.3](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.3-bookworm)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)|
-| PHP 8.2      | Bookworm | 8.2, 8.2-bookworm| [![Test and publish 8.2](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.2-bookworm)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)|
-| PHP 8.1      | Bookworm | 8.1, 8.1-bookworm | [![Test and publish 8.1](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.1-bookworm)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)|
+[![Test and publish](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=main)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)
+
+| PHP Version | Variant | Tags |
+|-------------|---------|------|
+| PHP 8.6 | Bookworm | 8.6, 8.6-bookworm |
+| PHP 8.5 | Bookworm | dev, 8.5, 8.5-bookworm |
+| PHP 8.4 | Bookworm | 8.4, 8.4-bookworm |
+| PHP 8.3 | Bookworm | 8.3, 8.3-bookworm |
+| PHP 8.2 | Bookworm | 8.2, 8.2-bookworm |
+| PHP 8.1 | Bookworm | 8.1, 8.1-bookworm |
 
 ### Version snapshots
 
@@ -27,11 +29,21 @@ following commits:
 | `8.5-bookworm` | `d2141379588346ac28631ffb48026a99693b0c4f` |
 | `8.6-bookworm` | `afb424429621997b39b3c75e3c1f4e0097b0fd4b` ([proposed](https://github.com/moodlehq/moodle-php-apache/pull/218)) |
 
-These are snapshots, not yet integrated into the build or publishing workflow.
-Their included workflow files are retained for reference and do not run from
-these directories. The root build context remains the PHP 8.5 `dev` image;
+The root workflow discovers these directories and tests each one independently.
+On `main`, it publishes each version with its full directory name and PHP version
+as tags. The included workflow files are retained for reference and do not run
+from these directories. The root build context remains the PHP 8.5 `dev` image;
 it differs from the `8.5-bookworm` snapshot. To build a snapshot locally, run
 `docker build versions/8.4-bookworm` (substituting the desired directory).
+
+The test and publish workflow can also be dispatched with a comma-separated
+`versions` input, such as `8.4-bookworm,8.5-bookworm` or `dev`. Leaving it empty
+builds all contexts. The manually dispatched conditional-build workflow checks
+the published images for new PHP and timezonedb releases and rebuilds only the
+affected contexts.
+
+Before switching publishing to this workflow, disable publishing from the old
+version branches so they cannot overwrite the same image tags.
 
 ## Example usage
 
