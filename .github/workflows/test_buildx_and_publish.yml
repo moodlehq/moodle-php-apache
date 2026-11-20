@@ -82,7 +82,7 @@ jobs:
 
   Publish:
     # Completely avoid forks and pull requests to try this job.
-    if: github.repository_owner == 'moodlehq' && contains(fromJson('["push", "workflow_dispatch", "workflow_call"]'), github.event_name)
+    if: github.repository_owner == 'moodlehq' && github.ref == 'refs/heads/main' && contains(fromJson('["push", "workflow_dispatch", "workflow_call"]'), github.event_name)
     # Requires Test to pass
     needs: Test
     runs-on: ubuntu-latest

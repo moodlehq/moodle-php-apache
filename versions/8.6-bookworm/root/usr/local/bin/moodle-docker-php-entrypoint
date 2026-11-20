@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -Eeo pipefail
+
+docker_process_init_files() {
+  local f
+  for f; do
+    case "$f" in
+      *.sh)
+        # Note: This hack is required for MacOS because the exeute bit is not checked for bind mounts.
+        # The executable bit is stored, but the test -x flag does not return corretly.
+        # Copying the file to an alternate file system allows it to be respected.
+        rm -f /tmp/testscript
+        cp "$f" /tmp/testscript
+        if [ -x "/tmp/testscript" ]; then
+          echo "$0: running $f"
+          "$f"
+        else
+          echo "$0: sourcing $f"
+          . "$f"
+        fi
+        ;;
+      *.conf)
+        echo "$0: copying $f into /etc/apache2/conf-enabled/"
+        cp "$f" /etc/apache2/conf-enabled/
+        a2enconf "$(basename "$f")"
+        ;;
+      *.ini)
+        echo "$0: copying $f into /usr/local/etc/php/conf.d/"
+        cp "$f" /usr/local/etc/php/conf.d/
+        ;;
+    esac
+  done
+}
+
+echo "Running PHP Configuration fetcher"
+/usr/local/bin/moodle-docker-php-ini
+echo
+
+mkdir -p /system-docker-entrypoint.d  /docker-entrypoint.d /final-docker-entrypoint.d
+echo "Building Entrypoint files from /system-docker-entrypoint.d/* and /docker-entrypoint.d/*"
+
+echo "Copying /system-docker-entrypoint.d/* to /final-docker-entrypoint.d/"
+cp -rf /system-docker-entrypoint.d/* /final-docker-entrypoint.d/ || true
+echo "Copying /docker-entrypoint.d/* to /final-docker-entrypoint.d/"
+cp -rf /docker-entrypoint.d/* /final-docker-entrypoint.d/ || true
+
+echo "Running entrypoint files from /final-docker-entrypoint.d/*"
+docker_process_init_files /final-docker-entrypoint.d/*
+echo
+
+echo "Starting docker-php-entrypoint with $@"
+source /usr/local/bin/docker-php-entrypoint
+echo

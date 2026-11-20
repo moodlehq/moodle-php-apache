@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "Checking for php configuration in environment"
+
+localinifile="/usr/local/etc/php/conf.d/20-local.ini"
+
+cat <<'EOF' > $localinifile
+; --
+; Automatically generated php ini configuration for Moodle
+; --
+
+EOF
+
+env | while IFS= read -r line; do
+  value=${line#*=}
+  fullname=${line%%=*}
+  if [[ $fullname = PHP_INI-* ]]; then
+    name=`echo $fullname | sed 's/^PHP_INI-//'`
+    echo "=> Found '${name}' with value '${value}'"
+
+    cat << EOF >> $localinifile
+; $fullname=$value
+$name = $value
+
+EOF
+  fi
+
+  if [[ $fullname = PHP_EXTENSION_* ]]; then
+    extension=`echo $fullname | sed 's/^PHP_EXTENSION_//'`
+    echo "=> Found extension to enable: '${extension}'"
+    if [[ -f "/usr/local/etc/php/conf.d/docker-php-ext-${extension}.ini" ]]; then
+      echo "=> Extension already enabled: '${extension}'"
+    else
+      echo "=> Enabling extension '${extension}'"
+      docker-php-ext-enable ${extension}
+    fi
+  fi
+done

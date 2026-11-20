@@ -1,0 +1,142 @@
+name: Conditional new builds
+
+# If any of the criteria happens, they set the trigger_build
+# output variable to 'true' and the rebuild will happen.
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  # This job compares the currently used timezonedb extension version
+  # in the docker images with the latest timezonedb release (tag) available
+  # @ https://github.com/php/pecl-datetime-timezonedb repository.
+  # If different, a rebuilt will be triggered.
+  datetimedb-new-release:
+    # Completely avoid forks and pull requests to try this job.
+    if: github.repository_owner == 'moodlehq' && contains(fromJson('["workflow_dispatch"]'), github.event_name)
+    runs-on: ubuntu-latest
+
+    outputs:
+      trigger_build: ${{ steps.calculate.outputs.result }}
+      docker_tag: ${{ steps.calculate.outputs.tag }}
+
+    steps:
+
+      - name: Configuring git vars
+        uses: rlespinasse/github-slug-action@v4
+
+      - name: Compare current and latest datetimedb versions
+        id: calculate
+        run: |
+          # Calculate current image version
+          # If the branch has has X.Y-xxxxx format, use it as docker tag. Else, use "dev" image (master branch).
+          tag=dev
+          if [[ "${{ env.GITHUB_REF_SLUG }}" =~ [0-9]+\.[0-9]+\-[a-z]+ ]]; then
+              tag=${{ env.GITHUB_REF_SLUG }}
+          fi
+          echo "LOG: docker tag: $tag"
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+
+          # Extract the timezonedb version from the image.
+          current=$(docker run -t --rm moodlehq/moodle-php-apache:$tag php -r 'echo timezone_version_get();' | tail -1)
+          echo "LOG: current: $current"
+
+          # Look for the latest tag available @ https://github.com/php/pecl-datetime-timezonedb
+          latest=$(curl -s "https://api.github.com/repos/php/pecl-datetime-timezonedb/tags" | jq -r '.[0].name' || true)
+          echo "LOG: latest: $latest"
+
+          # Compare the versions (digits only), if current < latest, then we need to rebuild.
+          result='false'
+          if [[ ${current//[!0-9]/} -lt ${latest//[!0-9]/} ]]; then
+              result='true'
+              echo "LOG: timezonedb to trigger image build"
+          fi
+          echo "result=$result" >> $GITHUB_OUTPUT
+
+  # This job compares the currently used php version in the docker images
+  # with the latests php release available @ https://www.php.net/releases/?json&version=X.Y
+  # If different, a rebuilt will be triggered.
+  php-new-release:
+    # Completely avoid forks and pull requests to try this job.
+    if: github.repository_owner == 'moodlehq' && contains(fromJson('["workflow_dispatch"]'), github.event_name)
+    runs-on: ubuntu-latest
+
+    outputs:
+      trigger_build: ${{ steps.calculate.outputs.result }}
+      docker_tag: ${{ steps.calculate.outputs.tag }}
+
+    steps:
+
+      - name: Configuring git vars
+        uses: rlespinasse/github-slug-action@v4
+
+      - name: Compare current and latest php versions
+        id: calculate
+        run: |
+          # Calculate current image version
+          # If the branch has has X.Y-xxxxx format, use it as docker tag. Else, use "dev" image (master branch).
+          tag=dev
+          if [[ "${{ env.GITHUB_REF_SLUG }}" =~ [0-9]+\.[0-9]+\-[a-z]+ ]]; then
+              tag=${{ env.GITHUB_REF_SLUG }}
+          fi
+          echo "LOG: docker tag: $tag"
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+
+          # Extract the php version from the image.
+          current=$(docker run -t --rm moodlehq/moodle-php-apache:$tag php -r 'echo PHP_VERSION;' | tail -1)
+          echo "LOG: current: $current"
+
+          # Look for the latest version available @ https://www.php.net/releases/?json&version=X.Y-whatever
+          latest=$(curl -s "https://www.php.net/releases/?json&version=$tag" | jq -r '.version' || true)
+          echo "LOG: latest: $latest"
+
+          # Compare the versions (digits only), if current < latest, then we need to rebuild.
+          # (but only if it's not an alpha, beta, rc version, aka, only if it's a pure numerical version)
+          result='false'
+          if [[ ! $current =~ ^[0-9\.]+$ ]]; then
+              echo "LOG: current version ($current) is not stable, skipping"
+          elif [[ ${current//[!0-9]/} -lt ${latest//[!0-9]/} ]]; then
+              result='true'
+              echo "LOG: new php release to trigger image build"
+          fi
+          echo "result=$result" >> $GITHUB_OUTPUT
+
+
+  # This job gets the results of all the jobs in the workflow and,
+  # if any of them has ended with the "trigger_build" output set, then
+  # will set its own (final) trigger_build output to 'true'.
+  evaluate-results:
+    runs-on: ubuntu-latest
+    needs: [datetimedb-new-release, php-new-release]
+
+    outputs:
+      trigger_build: ${{ steps.evaluate.outputs.result }}
+      docker_tag: ${{ needs.datetimedb-new-release.outputs.docker_tag }}
+
+    steps:
+
+      - name: Evaluate if we have to trigger a build
+        id: evaluate
+        run: |
+          # Add here more conditions (ORed) when new criteria are added.
+          result=false
+          if [[ "${{ needs.datetimedb-new-release.outputs.trigger_build }}" == "true" ]] ||
+             [[ "${{ needs.php-new-release.outputs.trigger_build }}" == "true" ]]; then
+              result=true
+              echo "LOG: Final evaluation, trigger the build"
+          fi
+          echo "result=$result" >> $GITHUB_OUTPUT
+
+  build:
+    # Only if the final workflow.outputs.trigger_build from evaluate job has decided to build.
+    if: needs.evaluate-results.outputs.trigger_build == 'true'
+    runs-on: ubuntu-latest
+    needs: [evaluate-results]
+
+    steps:
+
+    - name: Launch the Test and publish workflow (${{ needs.evaluate-results.outputs.docker_tag }})
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: Test, build and publish

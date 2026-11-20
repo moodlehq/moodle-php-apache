@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -Eeo pipefail
+
+docker_process_init_files() {
+  local f
+  for f; do
+    case "$f" in
+      *.sh)
+        # Note: This hack is required for MacOS because the exeute bit is not checked for bind mounts.
+        # The executable bit is stored, but the test -x flag does not return corretly.
+        # Copying the file to an alternate file system allows it to be respected.
+        rm -f /tmp/testscript
+        cp "$f" /tmp/testscript
+        if [ -x "/tmp/testscript" ]; then
+          echo "$0: running $f"
+          "$f"
+        else
+          echo "$0: sourcing $f"
+          . "$f"
+        fi
+        ;;
+      *.ini)
+        echo "$0: copying $f into /usr/local/etc/php/conf.d/"
+        cp "$f" /usr/local/etc/php/conf.d/
+        ;;
+    esac
+  done
+}
+
+echo "Running PHP Configuration fetcher"
+/usr/local/bin/moodle-docker-php-ini
+echo
+
+echo "Running entrypoint files from /docker-entrypoint.d/*"
+docker_process_init_files /docker-entrypoint.d/*
+echo
+
+echo "Starting docker-php-entrypoint with $@"
+source /usr/local/bin/docker-php-entrypoint
+echo

@@ -13,6 +13,26 @@ A Moodle PHP environment configured for Moodle development based on [Official PH
 | PHP 8.2      | Bookworm | 8.2, 8.2-bookworm| [![Test and publish 8.2](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.2-bookworm)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)|
 | PHP 8.1      | Bookworm | 8.1, 8.1-bookworm | [![Test and publish 8.1](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml/badge.svg?branch=8.1-bookworm)](https://github.com/moodlehq/moodle-php-apache/actions/workflows/test_buildx_and_publish.yml)|
 
+### Version snapshots
+
+The `versions/` directories contain independent build contexts imported from the
+following commits:
+
+| Directory | Source commit |
+|-----------|---------------|
+| `8.1-bookworm` | `8f78ef6286b0aab01cb577d6a7a2cdec31b4c25d` |
+| `8.2-bookworm` | `c55220126506b466c3c050f4382499517a9de8bf` |
+| `8.3-bookworm` | `4c5ae7d75b615307372bce616ac5f7c010b8d302` |
+| `8.4-bookworm` | `04d620c70d5579a69444ad69af0a738343c69326` |
+| `8.5-bookworm` | `d2141379588346ac28631ffb48026a99693b0c4f` |
+| `8.6-bookworm` | `afb424429621997b39b3c75e3c1f4e0097b0fd4b` ([proposed](https://github.com/moodlehq/moodle-php-apache/pull/218)) |
+
+These are snapshots, not yet integrated into the build or publishing workflow.
+Their included workflow files are retained for reference and do not run from
+these directories. The root build context remains the PHP 8.5 `dev` image;
+it differs from the `8.5-bookworm` snapshot. To build a snapshot locally, run
+`docker build versions/8.4-bookworm` (substituting the desired directory).
+
 ## Example usage
 
 The following command will expose the current working directory on port 8080:
