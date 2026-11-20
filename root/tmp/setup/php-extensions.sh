@@ -5,7 +5,7 @@ set -e
 echo "Installing apt dependencies"
 
 # Build packages will be added during the build, but will be removed at the end.
-BUILD_PACKAGES="gettext libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev \
+BUILD_PACKAGES="gettext libtool libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev \
   libldap2-dev libmariadb-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev \
   uuid-dev"
 
@@ -56,18 +56,20 @@ docker-php-ext-install -j$(nproc) gd
 docker-php-ext-configure ldap
 docker-php-ext-install -j$(nproc) ldap
 
-# APCu, igbinary, Memcached, PCov, Redis, Solr, timezonedb, uuid
-pecl install apcu igbinary memcached pcov solr timezonedb uuid
-docker-php-ext-enable apcu igbinary memcached pcov solr timezonedb uuid
+# APCu, igbinary, Memcached, PCov, Solr, timezonedb, uuid.
+export HOME=/tmp/pie-build
+mkdir -p "$HOME"
+pie install --no-interaction --no-cache apcu/apcu 'igbinary/igbinary:@RC' \
+    php-memcached/php-memcached pecl/pcov pecl/timezonedb pecl/uuid
+pie install --no-interaction --no-cache pecl/solr
 
 echo 'apc.enable_cli = On' >> /usr/local/etc/php/conf.d/10-docker-php-ext-apcu.ini
 
 # Install the redis extension enabling igbinary support.
-pecl install --configureoptions 'enable-redis-igbinary="yes"' redis
-docker-php-ext-enable redis
+pie install --no-interaction --no-cache phpredis/phpredis --enable-redis-igbinary
 
 # Install, but do not enable, xdebug and xhprof.
-pecl install xdebug xhprof
+pie install --no-interaction --no-cache --skip-enable-extension xdebug/xdebug wpelevator/xhprof
 
 echo "pcov.enabled=0" >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
 echo "pcov.exclude='~\/(tests|coverage|vendor|node_modules)\/~'" >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
@@ -75,7 +77,7 @@ echo "pcov.directory=." >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
 echo "pcov.initial.files=1024" >> /usr/local/etc/php/conf.d/10-docker-php-ext-pcov.ini
 
 # Keep our image size down..
-pecl clear-cache
+rm -rf /tmp/pie-build
 apt-get remove --purge -y $BUILD_PACKAGES
 apt-get autoremove -y
 apt-get clean
