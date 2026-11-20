@@ -1,4 +1,4 @@
-FROM php:8.5-apache-bookworm
+FROM php:8.6-apache-bookworm
 
 # So we can use it anywhere for conditional stuff. Keeping BC with old (non-buildkit, builders)
 ARG TARGETPLATFORM
@@ -10,20 +10,6 @@ RUN apt-get update && apt-get install -y \
     git bc default-mysql-client-core \
 && rm -rf /var/lib/apt/lists/*
 
-# Install pickle as an easier alternative to PECL, that is not
-# available any more for PHP 8 and up. Some alternatives searched were:
-#  - https://olvlvl.com/2019-06-docker-pecl-without-pecl
-#  - https://github.com/FriendsOfPHP/pickle
-#  - manually "curl https://pecl.php.net/get/xxxx && tar && docker-php-ext-install xxx"
-# Of course, if the images end using some alternative, we'll switch to it. Just right now
-# there isn't such an alternative.a
-#
-# Update 20201126: Finally, see https://github.com/docker-library/php/issues/1087 it seems that pear/pecl
-# continues being availbale with php8, so we are going to continue using it. The previous comments as
-# left in case we need to find an alternative way to install PECL stuff and there isn't any official.
-# For an example of php80-rc5 near complete, using pickle instead of pear/pecl, look to:
-# https://github.com/stronk7/moodle-php-apache/tree/8.0-buster-pickle-version
-
 # Generate all the UTF-8 locales.
 ARG DEBIAN_FRONTEND=noninteractive
 ADD root/tmp/setup/locales-gen.sh /tmp/setup/locales-gen.sh
@@ -31,11 +17,13 @@ RUN /tmp/setup/locales-gen.sh
 
 # Setup the required extensions.
 ADD root/tmp/setup/php-extensions.sh /tmp/setup/php-extensions.sh
-RUN /tmp/setup/php-extensions.sh
+RUN --mount=type=bind,from=ghcr.io/php/pie:1.5.5-bin,source=/pie,target=/usr/local/bin/pie \
+    /tmp/setup/php-extensions.sh
 
 # Install Microsoft sqlsrv.
 ADD root/tmp/setup/sqlsrv-extension.sh /tmp/setup/sqlsrv-extension.sh
-RUN /tmp/setup/sqlsrv-extension.sh
+RUN --mount=type=bind,from=ghcr.io/php/pie:1.5.5-bin,source=/pie,target=/usr/local/bin/pie \
+    /tmp/setup/sqlsrv-extension.sh
 
 RUN mkdir /var/www/moodledata && chown www-data /var/www/moodledata && \
     mkdir /var/www/phpunitdata && chown www-data /var/www/phpunitdata && \
