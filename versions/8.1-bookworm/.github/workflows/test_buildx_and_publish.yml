@@ -1,0 +1,118 @@
+name: Test, build and publish
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  REPOSITORY: moodle-php-apache
+  DOCKERHUB_OWNER: moodlehq
+  GH_OWNER: moodlehq
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: |
+          docker build . -t moodle-php-apache
+
+      - name: Run tests
+        run: |
+          docker run --name test0 -d -p 8000:80 \
+              -v $PWD/tests/fixtures:/var/www/html \
+              -v $PWD/tests/docker-entrypoint.d:/docker-entrypoint.d \
+              -e PHP_INI-memory_limit=256M \
+              -e PHP_INI-apc.enabled=0 \
+              -e PHP_INI-apc.enable_cli=0 \
+              -e PHP_INI-pcov.enabled=1 \
+              -e PHP_INI-upload_max_filesize=20M \
+              -e PHP_EXTENSION_xhprof=1 \
+              moodle-php-apache
+          docker exec test0 php /var/www/html/test.php
+          docker exec test0 php /var/www/html/check-ini.php
+          docker exec test0 php /var/www/html/check-entrypoint-scripts.php
+          docker exec test0 php /var/www/html/check-php-patches.php
+          curl --fail http://127.0.0.1:8000/test.php
+          curl --fail http://127.0.0.1:8000/check-ini.php
+
+      - name: Display container logs on failure
+        if: failure()
+        run: |
+          docker logs test0
+
+      - name: Cleanup docker images
+        run: |
+          docker rm -f test0
+
+  Publish:
+    # Completely avoid forks and pull requests to try this job.
+    if: github.repository_owner == 'moodlehq' && contains(fromJson('["push", "workflow_dispatch", "workflow_call"]'), github.event_name)
+    # Requires Test to pass
+    needs: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Calculate the tags to be pussed to the registries.
+      - name: Calculate image tag names
+        id: calculatetags
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.DOCKERHUB_OWNER }}/${{ env.REPOSITORY }}
+            ghcr.io/${{ env.GH_OWNER }}/${{ env.REPOSITORY }}
+          flavor: |
+            latest=false
+          tags: |
+            type=raw,value={{branch}}
+            type=match,pattern=(\d+.\d+),value={{branch}}
+
+      # https://github.com/docker/setup-qemu-action#usage
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # https://github.com/marketplace/actions/docker-setup-buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # https://github.com/docker/login-action#docker-hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # https://github.com/docker/login-action#github-container-registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # https://github.com/docker/build-push-action#multi-platform-image
+      - name: Build and publish to Docker Hub and Github registries
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.calculatetags.outputs.tags }}
+
+      # https://github.com/peter-evans/dockerhub-description
+      # Note that we only update the description with the master branch version.
+      - name: Set Docker Hub description from README.md
+        if: github.ref == 'refs/heads/main'
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ env.DOCKERHUB_OWNER }}/${{ env.REPOSITORY }}
